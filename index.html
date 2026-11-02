@@ -1543,7 +1543,44 @@ function deleteTxn(i){
   db.txns=db.txns.filter(y=>y.id!==i);save();
 }
 
-function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mera-hisab-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url)}
+async function exportData() {
+  const fileName = "MD_Accounts_Backup_" + new Date().toISOString().slice(0,10) + ".json";
+  const jsonData = JSON.stringify(db, null, 2);
+  try {
+    const plugins = window.Capacitor && window.Capacitor.Plugins;
+    const Filesystem = plugins && plugins.Filesystem;
+    const Share = plugins && plugins.Share;
+    if (Filesystem && Share) {
+      const saved = await Filesystem.writeFile({
+        path: fileName,
+        data: jsonData,
+        directory: 'CACHE',
+        encoding: 'utf8'
+      });
+      const fileUri = saved.uri || (await Filesystem.getUri({path: fileName, directory: 'CACHE'})).uri;
+      await Share.share({
+        title: 'MD Accounts JSON Backup',
+        text: 'अपनी JSON बैकअप फाइल सुरक्षित जगह पर Save करें।',
+        files: [fileUri],
+        dialogTitle: 'JSON Backup Save करें'
+      });
+      return;
+    }
+    const blob = new Blob([jsonData], {type: 'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  } catch (e) {
+    console.error('JSON backup export failed:', e);
+    alert('बैकअप फाइल तैयार/सेव नहीं हो सकी: ' + (e && e.message ? e.message : e));
+  }
+}
+
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.accounts)||!Array.isArray(d.txns))throw Error();d.accounts=d.accounts.map(a=>({rate:0,limit:0,available:0,emi:0,weight:0,...a}));d.txns=d.txns.map(t=>({...t,changes:Array.isArray(t.changes)?t.changes:[]}));if(confirm(t('load_backup_confirm'))){db=d;save();alert(t('backup_loaded'))}}catch(err){alert(t('invalid_backup'))}e.target.value=''};r.readAsText(f)}
 function nextDate(day){if(!day)return null;let now=new Date(),d=new Date(now.getFullYear(),now.getMonth(),Math.min(day,new Date(now.getFullYear(),now.getMonth()+1,0).getDate()));if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()))d=new Date(now.getFullYear(),now.getMonth()+1,Math.min(day,new Date(now.getFullYear(),now.getMonth()+2,0).getDate()));return d}
 function renderTools(){
@@ -1811,10 +1848,10 @@ window.addEventListener('resize',()=>{if($('home')?.classList.contains('active')
 <!-- Capacitor AdMob Integration (Banner, Interstitial Video & Rewarded Ad) -->
 <script>
 (function(){
-  const ADMOB_APP_ID = 'ca-app-pub-583188129330144~2578300444';
-  const ADMOB_BANNER_ID = 'ca-app-pub-583188129330144/2991789064';
-  const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-583188129330144/8965625723';
-  const ADMOB_REWARDED_ID = 'ca-app-pub-583188129330144/7767047947';
+  const ADMOB_APP_ID = 'ca-app-pub-5831881293330144~2578300444';
+  const ADMOB_BANNER_ID = 'ca-app-pub-5831881293330144/2591789064';
+  const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-5831881293330144/8965625723';
+  const ADMOB_REWARDED_ID = 'ca-app-pub-5831881293330144/7767047947';
 
   let AdMobPlugin = null;
   let interstitialReady = false;
@@ -1852,11 +1889,15 @@ window.addEventListener('resize',()=>{if($('home')?.classList.contains('active')
   }
 
   async function preloadRewarded() {
-    if (!AdMobPlugin) return;
+    if (!AdMobPlugin) return false;
     try {
       await AdMobPlugin.prepareRewardVideoAd({ adId: ADMOB_REWARDED_ID });
       rewardedReady = true;
-    } catch (e) { rewardedReady = false; }
+      return true;
+    } catch (e) {
+      rewardedReady = false;
+      return false;
+    }
   }
 
   window.showAppVideoAd = async function() {
@@ -1871,21 +1912,19 @@ window.addEventListener('resize',()=>{if($('home')?.classList.contains('active')
   };
 
   window.showAppRewardAd = async function(onSuccess) {
-    if (!AdMobPlugin) { if(onSuccess) onSuccess(); return; }
+    if (!AdMobPlugin) { if (onSuccess) onSuccess(); return; }
     try {
+      if (!rewardedReady) await preloadRewarded();
       if (rewardedReady) {
-        const reward = await AdMobPlugin.showRewardVideoAd();
+        await AdMobPlugin.showRewardVideoAd();
         rewardedReady = false;
         setTimeout(preloadRewarded, 2000);
-        if(onSuccess) onSuccess();
-      } else {
-        preloadRewarded();
-        if(onSuccess) onSuccess();
       }
     } catch (e) {
-      preloadRewarded();
-      if(onSuccess) onSuccess();
+      rewardedReady = false;
+      setTimeout(preloadRewarded, 2000);
     }
+    if (onSuccess) onSuccess();
   };
 
   window.addEventListener('DOMContentLoaded', () => {
