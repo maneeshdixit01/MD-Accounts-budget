@@ -1,0 +1,1928 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#145c50"><title>MD Account & Budget Management</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#145c50">
+<style>
+:root{--green:#145c50;--green-dark:#0b433a;--mint:#bce8d9;--green2:#e3f3ee;--bg:#f4f7f6;--card:#fff;--text:#172b27;--muted:#687b76;--line:#e1e9e6;--red:#b42318;--amber:#986500;--blue:#2457a7;--fab-bg:#1a8a72}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f0f7f4 0%,#f4f7f6 300px);color:var(--text);font-family:system-ui,-apple-system,'Noto Sans Devanagari',sans-serif;padding-bottom:70px}
+header{background:linear-gradient(135deg,#0b433a 0%,#145c50 45%,#1a8a72 70%,#26836f 100%);color:white;padding:24px 16px 22px;border-radius:0 0 26px 26px;box-shadow:0 8px 24px #0b433a20;position:relative;overflow:hidden}
+header:after{content:"₹";position:absolute;right:18px;top:-24px;font-size:110px;font-weight:900;color:#ffffff10;pointer-events:none}
+header:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,#ffffff22,transparent 60%);pointer-events:none}
+.wrap{max-width:850px;margin:auto;padding:14px 12px 92px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:12px;box-shadow:0 4px 14px #163e3508;transition:box-shadow .2s, transform .2s}
+.card:hover{box-shadow:0 6px 20px #163e3515}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metric small{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.2px}
+.metric{cursor:pointer;text-align:left;width:100%;font:inherit;display:block;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden;border:0}
+.metric:before{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:currentColor;opacity:.05}
+.metric:active{transform:scale(.97)}
+.metric .tap-hint{font-size:10px;color:var(--green);margin-top:7px;font-weight:700}
+.metric strong{display:block;font-size:22px;margin-top:7px;overflow-wrap:anywhere}
+.metric .sub{font-size:11px;color:var(--muted);margin-top:4px}
+.metric.tone-income{background:linear-gradient(145deg,#e9fbf1,#d4f5e3);border-color:#b6e8cc;color:#0d6b43}
+.metric.tone-family{background:linear-gradient(145deg,#eef2ff,#e0e8ff);border-color:#c7d4ff;color:#3730a3}
+.metric.tone-card{background:linear-gradient(145deg,#fff1f2,#ffe4e6);border-color:#fecdd3;color:#9f1239}
+.metric.tone-loan{background:linear-gradient(145deg,#fff7ed,#ffedd5);border-color:#fed7aa;color:#9a3412}
+.metric.tone-net{background:linear-gradient(145deg,#f5f3ff,#ede9fe);border-color:#ddd6fe;color:#5b21b6;padding:20px}
+.big-net-card{display:block;width:100%;margin-top:12px;border:1px solid #ddd6fe}
+.section-title{font-size:17px;margin:16px 2px 10px}.muted{color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.btn{border:0;background:linear-gradient(135deg,var(--green),#217b68);color:#fff;border-radius:12px;padding:12px 15px;font-weight:750;font-size:14px;cursor:pointer;box-shadow:0 3px 8px #145c501a;transition:transform .12s,box-shadow .12s,filter .12s}
+.btn:active{transform:scale(.96)}.btn:hover{filter:brightness(1.08);box-shadow:0 5px 12px #145c5025}
+.btn.secondary{background:var(--green2);color:var(--green)}
+.btn.danger{background:#fff0ee;color:var(--red)}
+.btn.small{padding:7px 9px;font-size:12px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field.full{grid-column:1/-1}
+label{font-size:12px;color:var(--muted);font-weight:700}
+input,select,textarea{width:100%;border:1px solid #d5e0dc;border-radius:10px;background:#fff;padding:11px 10px;font:inherit;font-size:14px;color:var(--text);min-width:0;transition:border-color .2s}
+input:focus,select:focus{outline:2px solid #9ed4c5;border-color:var(--green)}
+.hint{font-size:11px;color:var(--muted);line-height:1.5}
+.item{padding:12px 0;border-bottom:1px solid var(--line);transition:background .15s}.item:hover{background:#fafcfb}.item:last-child{border-bottom:0}.item strong{font-size:14px}
+.amount{font-weight:800;white-space:nowrap}.positive{color:var(--green)}.negative{color:var(--red)}
+.pill{display:inline-block;background:linear-gradient(135deg,#eef3f1,#e3f3ee);color:#47615a;border-radius:20px;padding:4px 8px;font-size:11px;margin-top:5px}
+.empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:13px}
+.notice{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fcd34d;color:#78580b;border-radius:12px;padding:11px;font-size:12px;line-height:1.5;margin:10px 0}
+.hidden{display:none!important}
+.foot{font-size:11px;color:var(--muted);text-align:center;margin-top:20px}
+.filterrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.chartwrap{width:100%;overflow:hidden;background:#fafcfb;border-radius:14px;padding:10px;box-shadow:inset 0 2px 6px #00000005}
+canvas{width:100%;height:240px;display:block;image-rendering:auto}
+.filelabel{display:inline-block}.dangertext{color:var(--red)}
+body.privacy .moneyval,body.privacy .metric strong,body.privacy .amount,body.privacy .private-number{filter:blur(7px);user-select:none}
+.featuregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.featuretile{background:linear-gradient(145deg,#f0f9f6,#e3f3ee);border:1px solid #d5ebe3;border-radius:12px;padding:12px;transition:transform .15s}
+.featuretile:active{transform:scale(.97)}.featuretile strong{display:block;font-size:14px}.featuretile small{color:var(--muted)}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding-left:18px;padding-right:18px}}
+@media(max-width:420px){.wrap{padding-left:10px;padding-right:10px}.formgrid{gap:8px}.card{padding:12px}.section-title{font-size:16px}.metric strong{font-size:18px}}
+.topbar{display:flex;align-items:center;gap:12px;margin:-24px -16px 18px;padding:14px 16px 0;position:relative;z-index:1}
+.menu-btn{border:1px solid #ffffff55;background:#ffffff18;color:#fff;border-radius:12px;width:44px;height:42px;font-size:25px;cursor:pointer}
+.topbar-title{font-size:20px;font-weight:800}.topbar-sub{font-size:11px;color:#d9eee8}
+.lang-toggle{margin-left:auto;position:relative;z-index:2;border:1px solid #ffffff88;background:#ffffff20;color:#fff;border-radius:11px;padding:8px 11px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap;transition:transform .15s}
+
+/* DRAWER (MENU) */
+.drawer-shade{position:fixed;inset:0;background:#102c2680;z-index:20;display:none}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(82vw,310px);background:#fff;z-index:21;transform:translateX(-105%);transition:transform .22s ease;padding:20px 14px;box-shadow:12px 0 40px #0002;overflow:auto}
+.drawer.open{transform:translateX(0)}.drawer-shade.open{display:block}
+.drawer-head{background:linear-gradient(135deg,#0b433a,#145c50 60%,#1a8a72);color:#fff;border-radius:16px;padding:17px;margin-bottom:14px}.drawer-head strong{font-size:19px}
+.drawer-link{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;padding:14px 12px;border-radius:12px;font:inherit;font-weight:700;color:var(--text);cursor:pointer;margin-bottom:2px}
+.drawer-link.active,.drawer-link:active{background:var(--green2);color:var(--green)}.drawer-link span{font-size:21px;width:28px;text-align:center}
+
+.page{display:none;margin-top:15px}.page.active{display:block;animation:pop .18s ease}
+.subtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+.subtabs.passbook-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.passbook-tabs .subtile{padding:12px 7px;min-height:90px}.passbook-tabs .subtile strong{font-size:12px;line-height:1.35}.passbook-tabs .subtile small{font-size:10px}
+.subtile{border:1px solid var(--line);background:#fff;border-radius:15px;padding:15px 10px;text-align:left;min-height:98px;cursor:pointer;color:var(--text);font:inherit;box-shadow:0 3px 10px #163e3508;transition:transform .15s,box-shadow .15s,border-color .15s}
+.subtile:active{transform:scale(.97)}.subtile strong{display:block;font-size:14px;margin:7px 0 4px}.subtile small{font-size:11px;color:var(--muted)}
+.subtile .ico{font-size:24px;color:var(--green);background:linear-gradient(135deg,#145c50,#26836f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.subtile.income-ico .ico{background:linear-gradient(135deg,#059669,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtile.family-ico .ico{background:linear-gradient(135deg,#7c3aed,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtile.asset-ico .ico{background:linear-gradient(135deg,#d97706,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtile.active{background:linear-gradient(145deg,#e3f3ee,#d4ebe4);border-color:#145c50;box-shadow:0 4px 14px #145c5022}
+.txt-green{color:#059669 !important}
+.txt-red{color:#dc2626 !important}
+.txt-blue{color:#2563eb !important}
+.subview{display:none}.subview.active{display:block}
+.mini-tabs{display:flex;gap:7px;overflow:auto;margin:8px 0 12px}
+.mini-tabs button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--muted)}
+.mini-tabs button.active{background:var(--green);border-color:var(--green);color:#fff}
+.backline{display:flex;align-items:center;gap:8px;margin:4px 0 12px}
+.backline button{border:0;background:var(--green2);color:var(--green);padding:8px 11px;border-radius:10px;font-weight:800}
+.account-row{cursor:pointer}.account-row:active{background:var(--green2)}
+.closed-label{display:inline-block;background:#f1f2f1;color:#58615e;padding:3px 8px;border-radius:9px;font-size:10px;margin-left:4px}
+.monthfilters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(min-width:760px){.wrap{max-width:920px}.drawer{width:300px}}
+.cardbrand-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.cardbrand-tile{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;border:1px solid var(--line);border-radius:16px;padding:13px;background:linear-gradient(145deg,#fff,#f2f8f6);font:inherit;color:var(--text);box-shadow:0 4px 12px #163e3508;min-width:0}
+.cardbrand-logo{display:flex;align-items:center;justify-content:center;min-width:46px;height:34px;padding:0 7px;border-radius:9px;background:linear-gradient(135deg,var(--green-dark),#278b77);color:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
+.cardbrand-tile strong{font-size:13px;overflow-wrap:anywhere}.cardbrand-caption{font-size:11px;color:var(--muted)}.cardbrand-amount{font-size:12px;font-weight:800;color:var(--green)}
+.account-detail-tile{width:100%;display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);border-radius:13px;padding:12px;margin:7px 0;background:#fff;color:var(--text);font:inherit}
+.account-detail-icon{font-size:24px}
+.account-detail-name{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.account-detail-name strong{font-size:13px;overflow-wrap:anywhere}.account-detail-name small{font-size:11px;color:var(--muted)}
+.account-detail-tile>strong{font-size:13px;white-space:nowrap}
+@keyframes fadein{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes pop{from{transform:scale(.92);opacity:.7}to{transform:scale(1);opacity:1}}
+
+.auth-overlay{position:fixed;inset:0;z-index:9999;background:#0b433af2;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.auth-box{width:min(100%,440px);background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 60px #0004;max-height:96vh;overflow:auto}
+.auth-box h2{margin:0 0 8px;font-size:22px}.auth-box p{color:var(--muted);font-size:13px;line-height:1.55}.auth-box .field{margin:12px 0}.auth-box .btn{width:100%;margin-top:8px}.auth-note{font-size:11px!important;background:#fff8e6;border-radius:10px;padding:10px}
+.auth-msg{font-size:12px;margin-top:8px;min-height:16px;font-weight:700}.auth-msg.error{color:var(--red)}.auth-msg.success{color:#059669}
+
+.avatar-circle{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#145c50,#26836f);color:#fff;display:grid;place-items:center;font-size:30px;font-weight:900;margin:0 auto 10px}
+.profile-head{text-align:center;padding:14px 0}
+.profile-head h3{margin:6px 0 2px;font-size:20px}
+.profile-head p{margin:0;color:var(--muted);font-size:12px}
+.profile-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.profile-row:last-child{border-bottom:0}
+.profile-row .lbl{font-size:12px;color:var(--muted);font-weight:700}
+.profile-row .val{font-size:14px;font-weight:700;overflow-wrap:anywhere;text-align:right}
+
+.cat-list-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cat-list-item:last-child{border-bottom:0}
+.cat-list-item .cat-name{flex:1;font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.cat-empty{text-align:center;color:var(--muted);padding:20px 10px;font-size:13px}
+
+/* ============ SMART CALENDAR ============ */
+.smart-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:12px;touch-action:pan-y;user-select:none}
+.smart-calendar .cal-head{text-align:center;font-size:12px;color:var(--muted);padding:5px 0}
+.smart-calendar .cal-day{min-height:58px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;cursor:pointer;touch-action:none;padding:2px 0;font:inherit;font-size:14px;line-height:1.2}
+.smart-calendar .cal-day.has-tx:after{content:'';position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+.smart-calendar .cal-day .day-total{font-size:9px;color:var(--red);font-weight:700;margin-top:1px;line-height:1.1}
+.smart-calendar .cal-day .day-income{font-size:9px;color:#059669;font-weight:800;margin-top:1px;line-height:1.1}
+.smart-calendar .cal-day.selected{background:#dcfce7;color:#14532d;border-color:#22c55e;box-shadow:inset 0 -4px 0 #22c55e;border-radius:7px}
+.smart-calendar .cal-day.range-start,.smart-calendar .cal-day.range-end{background:#15803d;color:#fff;border-color:#15803d;box-shadow:0 0 0 2px #86efac}
+.smart-calendar .cal-day.range-start{border-radius:10px 4px 4px 10px}
+.smart-calendar .cal-day.range-end{border-radius:4px 10px 10px 4px}
+.smart-calendar .cal-day.selected.has-tx:after{background:currentColor}
+.smart-calendar .cal-day.selected .day-income,.smart-calendar .cal-day.selected .day-total{color:currentColor}
+.smart-calendar .cal-day.empty-day{visibility:hidden}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:24px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#26836f,#1a8a72);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px #1a8a7255;border:0;cursor:pointer;z-index:10;transition:transform .2s}
+.fab:active{transform:scale(.9)}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.quick-btn{background:#fff;border:1px solid #d5ebe3;border-radius:12px;padding:12px;font:inherit;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 8px #163e3508;cursor:pointer;transition:transform .1s}
+.quick-btn:active{transform:scale(.97)}
+.quick-btn.income{color:#0d6b43;background:#f0fdf4;border-color:#b6e8cc}
+.quick-btn.expense{color:#9f1239;background:#fff1f2;border-color:#fecdd3}
+</style>
+</head><body>
+
+<div class="auth-overlay" id="profileGate" style="display:none">
+  <div class="auth-box">
+    <form id="profileForm">
+      <h2 data-i18n="profile_setup">अपनी प्रोफाइल बनाएँ</h2>
+      <p data-i18n="profile_setup_desc">ऐप इस्तेमाल करने के लिए अपना नाम, मोबाइल नंबर और ईमेल आईडी दर्ज करें।</p>
+      <div class="field"><label for="pfName" data-i18n="name">नाम</label><input id="pfName" autocomplete="name" placeholder="आपका नाम" required></div>
+      <div class="field"><label for="pfMobile" data-i18n="mobile">मोबाइल नंबर</label><input id="pfMobile" autocomplete="tel" inputmode="tel" placeholder="10 अंकों का मोबाइल" required></div>
+      <div class="field"><label for="pfEmail" data-i18n="email">ईमेल आईडी</label><input id="pfEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+      <button class="btn" type="submit" data-i18n="create_profile">प्रोफाइल बनाएँ</button>
+      <div class="auth-msg" id="profileMsg"></div>
+      <p class="auth-note" data-i18n="profile_note">यह प्रोफाइल इसी डिवाइस/ब्राउज़र में सुरक्षित रहती है। अगली बार ऐप खोलने पर सीधे आपकी प्रोफाइल खुलेगी।</p>
+    </form>
+  </div>
+</div>
+
+<header>
+  <div class="topbar">
+    <button class="menu-btn" id="menuOpen" aria-label="Open Menu">☰</button>
+    <div>
+      <div class="topbar-title" id="topbarTitle"><span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> <span data-i18n="app_title">एमडी अकाउंट एंड बजट मैनेजमेंट</span></div>
+      <button id="languageToggle" class="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="Switch language">English</button>
+      <div class="topbar-sub" data-i18n="app_sub">व्यक्तिगत आय-व्यय और वित्तीय स्थिति</div>
+    </div>
+  </div>
+</header>
+<div class="drawer-shade" id="drawerShade" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Main Menu">
+<div class="drawer-head"><strong id="drawerUserName"><span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> <span data-i18n="app_title">एमडी अकाउंट एंड बजट मैनेजमेंट</span></strong><div style="font-size:12px;margin-top:4px" data-i18n="personal_record">आपका निजी वित्तीय रिकॉर्ड</div></div>
+<button class="drawer-link active" data-page="home"><span>⌂</span><span data-i18n="dashboard">डैशबोर्ड</span></button>
+<button class="drawer-link" data-page="entry"><span>＋</span><span data-i18n="entry">एंट्री</span></button>
+<button class="drawer-link" data-page="accounts"><span>▤</span><span data-i18n="accounts">खाते</span></button>
+<button class="drawer-link" data-page="history"><span>▣</span><span data-i18n="passbook">पासबुक</span></button>
+<button class="drawer-link" data-page="graph"><span>▥</span><span data-i18n="charts_alerts">चार्ट एंड अलर्ट</span></button>
+<button class="drawer-link" data-page="tools"><span>⚙</span><span data-i18n="tools">अन्य सुविधाएँ</span></button>
+<button class="drawer-link" data-page="profile"><span>👤</span><span data-i18n="profile">मेरी प्रोफाइल</span></button>
+<div class="notice" data-i18n="data_notice">डेटा इसी ब्राउज़र में सेव होता है। नियमित बैकअप लें।</div>
+</aside>
+<main class="wrap">
+
+<section id="home" class="page active">
+  <div id="homeDashboardContent">
+    <div class="quick-actions">
+      <button class="quick-btn expense" onclick="navigateTo('entry'); entryPreset('expense',document.querySelector('.subtile'));"><span>🛒</span><span data-i18n="quick_exp">तेज़ी से खर्च जोड़ें</span></button>
+      <button class="quick-btn income" onclick="navigateTo('entry'); entryPreset('bankdeposit',document.querySelector('.subtile'));"><span>💰</span><span data-i18n="quick_inc">तेज़ी से आय जोड़ें</span></button>
+    </div>
+    <div class="grid" id="homeMetrics"></div>
+    <div id="homeNetWorth"></div>
+    <div style="text-align:center; font-size:12px; color:#8aa09b; margin-top:20px; padding: 0 15px; line-height:1.6; font-weight: 600;" data-i18n="privacy_msg">
+      आपका समस्त डेटा आपके फोन में सुरक्षित है, इसलिए कृपया नियमित बैकअप लेते रहें।
+    </div>
+  </div>
+  <div id="metricDetail" class="card hidden" aria-live="polite"></div>
+</section>
+
+<section id="accounts" class="page"><h2 class="section-title" data-i18n="accounts">खाते</h2>
+<div class="subtabs">
+<button class="subtile active" onclick="accountView('add')"><span class="ico">＋</span><strong data-i18n="add_acc">खाते जोड़ें</strong><small data-i18n="add_acc_desc">बैंक, कार्ड, लोन, निवेश और अन्य खाते</small></button>
+<button class="subtile" onclick="accountView('manage')"><span class="ico">✎</span><strong data-i18n="edit_acc">खाते संपादित करें</strong><small data-i18n="edit_acc_desc">सिर्फ बैंक/कार्ड/लोन/नकद/निवेश/संपत्ति</small></button>
+</div>
+<div id="accountAddView" class="subview active">
+<h2 class="section-title" data-i18n="add_acc">खाते जोड़ें</h2>
+<div class="card">
+<form id="accountForm">
+<div class="formgrid">
+<div class="field full"><label data-i18n="acc_type">खाते का प्रकार</label><select id="aType" required>
+<option value="bank" data-i18n="bank">बैंक / सैलरी खाता</option>
+<option value="card" data-i18n="card">क्रेडिट कार्ड</option>
+<option value="loan" data-i18n="loan">बैंक लोन</option>
+<option value="familygiven" data-i18n="fam_given">पारिवारिक लोन (जो दिया है)</option>
+<option value="familytaken" data-i18n="fam_taken">पारिवारिक लोन (जो लिया है)</option>
+<option value="investment" data-i18n="invest">जमा खाता / पब्लिक इन्वेस्टमेंट</option>
+<option value="gold" data-i18n="gold">सोना (Gold)</option>
+<option value="silver" data-i18n="silver">चांदी (Silver)</option>
+<option value="land" data-i18n="land">जमीन / प्रॉपर्टी (Land)</option>
+<option value="cash" data-i18n="cash">नकद</option>
+</select></div>
+<div class="field full" id="aNameWrap"><label id="aNameLabel" data-i18n="name_lbl">बैंक का नाम / खाते का नाम</label><input id="aName" placeholder="जैसे SBI सैलरी खाता" required></div>
+<div class="field" id="aBalanceWrap"><label id="aBalanceLabel" data-i18n="balance">वर्तमान बैलेंस (₹)</label><input id="aBalance" type="number" min="0" step="0.01" value="0"></div>
+<div class="field" id="aWeightWrap" style="display:none"><label data-i18n="weight">मात्रा (ग्राम/यूनिट)</label><input id="aWeight" type="number" min="0" step="0.01" value="0"></div>
+<div class="field" id="aLimitWrap"><label data-i18n="limit">क्रेडिट कार्ड कुल लिमिट (₹)</label><input id="aLimit" type="number" min="0" step="0.01"></div>
+<div class="field" id="aAvailWrap"><label data-i18n="avail_limit">वर्तमान उपलब्ध लिमिट (₹)</label><input id="aAvail" type="number" min="0" step="0.01"></div>
+<div class="field" id="aEmiWrap"><label data-i18n="emi">मासिक किस्त (₹)</label><input id="aEmi" type="number" min="0" step="0.01"></div>
+</div>
+<p class="hint" data-i18n="acc_note">सुरक्षा के लिए पूरा बैंक/कार्ड नंबर या PIN न भरें।</p>
+<button class="btn" type="submit" data-i18n="save">सेव करें</button>
+</form>
+</div>
+</div>
+<div id="accountManageView" class="subview">
+<h2 class="section-title" data-i18n="my_active_acc">मेरे सक्रिय खाते</h2>
+<div class="card" id="accountList"></div>
+<h2 class="section-title" data-i18n="closed_acc">बंद खाते</h2>
+<div class="card" id="closedAccountList"></div>
+</div>
+</section>
+
+<section id="entry" class="page"><h2 class="section-title" data-i18n="entry">एंट्री</h2>
+<div class="subtabs">
+<button class="subtile active" onclick="entryPreset('bankdeposit',this)"><span class="ico">🏦</span><strong class="txt-green" data-i18n="bank_deposit">बैंक डिपॉजिट / विड्रॉल / इनकम</strong><small data-i18n="bank_deposit_desc">अकाउंट ट्रांसफर, सैलरी, नकद जमा</small></button>
+<button class="subtile" onclick="openCategorySetup('incomesource')"><span class="ico">＋</span><strong data-i18n="add_inc_cat">आय की मद जोड़ें</strong><small data-i18n="add_inc_desc">सैलरी के अलावा आय के स्रोत बनाएँ</small></button>
+<button class="subtile" onclick="openCategorySetup('category')"><span class="ico">＋</span><strong data-i18n="add_exp_cat">खर्च की मद जोड़ें</strong><small data-i18n="add_exp_desc">दूध, पेट्रोल और अन्य खर्च की मदें बनाएँ</small></button>
+<button class="subtile" onclick="entryPreset('expense',this)"><span class="ico">🛒</span><strong class="txt-red" data-i18n="record_exp">खर्च दर्ज करें</strong><small data-i18n="record_exp_desc">रोजमर्रा की खरीदारी</small></button>
+<button class="subtile" onclick="entryPreset('pay',this)"><span class="ico">🧾</span><strong class="txt-blue" data-i18n="pay_bill">किस्त / कार्ड बिल जमा</strong><small data-i18n="pay_bill_desc">लोन किस्त या क्रेडिट कार्ड बिल</small></button>
+<button class="subtile" onclick="entryPreset('adjust',this)"><span class="ico">％</span><strong class="txt-red" data-i18n="adjust">ब्याज / पेनल्टी / रिवॉर्ड</strong><small data-i18n="adjust_desc">ब्याज, शुल्क और क्रेडिट</small></button>
+<button class="subtile family-ico" onclick="entryPreset('familypay',this)"><span class="ico">👥</span><strong class="txt-green" data-i18n="fam_loan">पारिवारिक लोन चुकाना / वसूलना</strong><small data-i18n="fam_loan_desc">जो लिया है उसे चुकाएँ, जो दिया है उसे वसूलें</small></button>
+<button class="subtile asset-ico" onclick="entryPreset('asset',this)"><span class="ico">💎</span><strong class="txt-blue" data-i18n="asset">संपत्ति (सोना/चांदी/जमीन) खरीदें/बेचें</strong><small data-i18n="asset_desc">एसेट का स्टॉक और ट्रांजेक्शन</small></button>
+<button class="subtile" onclick="entryPreset('investment',this)"><span class="ico">📈</span><strong class="txt-green" data-i18n="invest">निवेश खरीदें / बेचें</strong><small data-i18n="invest_desc">RD, FD, PPF और NPS में जमा / निकासी</small></button>
+</div>
+
+<div class="card">
+<form id="txnForm">
+<div class="formgrid">
+<div class="field full hidden"><label data-i18n="entry_type">एंट्री का प्रकार</label><select id="tType">
+<option value="bankdeposit" data-i18n="bank_deposit">बैंक डिपॉजिट / विड्रॉल / इनकम</option>
+<option value="pay" data-i18n="pay_bill">क्रेडिट कार्ड बिल / लोन किस्त</option>
+<option value="expense" data-i18n="record_exp">खर्च दर्ज करें</option>
+<option value="adjust" data-i18n="adjust">ब्याज / पेनल्टी</option>
+<option value="familypay" data-i18n="fam_loan">पारिवारिक लोन चुकाना / वसूलना</option>
+<option value="asset" data-i18n="asset">संपत्ति खरीदें/बेचें</option>
+<option value="investment" data-i18n="invest">निवेश खरीदें/बेचें</option>
+</select></div>
+
+<div class="field full hidden" id="tToWrap"><label id="tToLabel">To</label><select id="tToAccount"></select></div>
+<div class="field full hidden" id="tFromWrap"><label id="tFromLabel">From</label><select id="tFromAccount"></select></div>
+<div class="field hidden" id="tAssetWeightWrap"><label data-i18n="weight">मात्रा (ग्राम/यूनिट)</label><input id="tAssetWeight" type="number" min="0.01" step="0.01" placeholder="0"></div>
+<div class="field hidden" id="tCashFeeWrap"><label data-i18n="cash_fee">नकद निकासी शुल्क (₹)</label><input id="tCashFee" type="number" min="0" step="0.01" value="0"></div>
+
+<div class="field"><label data-i18n="amount">रकम (₹)</label><input id="tAmount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div>
+<div class="field"><label data-i18n="date">तारीख</label><input id="tDate" type="date" required></div>
+<div class="field full"><label data-i18n="note_opt">विवरण (वैकल्पिक)</label><input id="tNote" maxlength="120" placeholder="जैसे कंप्यूटर मरम्मत / अक्टूबर सैलरी"></div>
+</div>
+<p class="hint" id="entryHint" data-i18n="fill_save">विवरण भरकर सेव करें।</p>
+<button class="btn" type="submit" data-i18n="save_entry">एंट्री सेव करें</button>
+</form>
+</div>
+</section>
+
+<section id="history" class="page"><h2 class="section-title" data-i18n="passbook">पासबुक</h2>
+<div class="subtabs passbook-tabs">
+<button class="subtile active" onclick="passbookView('view')"><span class="ico">▤</span><strong data-i18n="view_txn">ट्रांजेक्शन देखें</strong><small data-i18n="view_txn_desc">खाता-वार और तारीख-वार</small></button>
+<button class="subtile" onclick="passbookView('edit')"><span class="ico">✎</span><strong data-i18n="del_txn">ट्रांजेक्शन हटाएँ</strong><small data-i18n="del_txn_desc">गलत एंट्री हटाएँ</small></button>
+<button class="subtile" onclick="passbookView('saving')"><span class="ico">₹</span><strong data-i18n="saving_detail">बचत का विवरण</strong><small data-i18n="saving_desc">माह की आय, खर्च, बचत</small></button>
+</div>
+<div class="subview active" id="passView">
+<div class="mini-tabs">
+<button class="active" onclick="passFilterMode('all',this)" data-i18n="all_txn">सभी ट्रांजेक्शन</button>
+<button onclick="passFilterMode('bank',this)" data-i18n="bank">बैंक</button>
+<button onclick="passFilterMode('card',this)" data-i18n="card">क्रेडिट कार्ड</button>
+<button onclick="passFilterMode('loan',this)" data-i18n="loan">लोन</button>
+<button onclick="passFilterMode('cash',this)" data-i18n="cash">नकद</button>
+</div>
+<div class="card monthfilters">
+<div class="field"><label data-i18n="date_from">तारीख से</label><input id="passFrom" type="date"></div>
+<div class="field"><label data-i18n="date_to">तारीख तक</label><input id="passTo" type="date"></div>
+</div>
+<div class="card" style="background:#f9fbfb">
+  <div class="actions" style="justify-content:space-between">
+    <button class="btn secondary small" onclick="downloadStatement('excel')" data-i18n="excel_dl">📊 Excel (CSV) डाउनलोड</button>
+    <button class="btn secondary small" onclick="downloadStatement('pdf')" data-i18n="pdf_dl">📄 PDF डाउनलोड</button>
+  </div>
+  <p class="hint" style="margin-top:8px; text-align:center;" data-i18n="statement_hint">चुनी गई तारीखों और फिल्टर के अनुसार स्टेटमेंट डाउनलोड करें।</p>
+</div>
+<div class="card">
+  <div class="field" style="margin-bottom:8px"><label data-i18n="search">खोजें (विवरण / नोट)</label><input id="passSearch" type="search" placeholder="जैसे दूध, सैलरी..."></div>
+  <div class="filterrow">
+<div class="field"><label data-i18n="exp_cat">खर्च की मद</label><select id="fCategory"><option value="">सभी मद</option></select></div>
+<div class="field"><label data-i18n="acc">बैंक / कार्ड / लोन</label><select id="fAccount"><option value="">सभी खाते</option></select></div>
+<div class="field"><label data-i18n="month">महीना</label><select id="fMonth"><option value="">सभी 6 महीने</option></select></div>
+<div class="field"><label data-i18n="entry_type">एंट्री का प्रकार</label><select id="fType"><option value="" data-i18n="all">सभी प्रकार</option>
+<option value="bankdeposit" data-i18n="bank_deposit">बैंक डिपॉजिट / आय</option>
+<option value="expense" data-i18n="record_exp">खर्च</option>
+<option value="pay" data-i18n="pay_bill">कार्ड / लोन भुगतान</option>
+<option value="familypay" data-i18n="fam_loan">पारिवारिक लोन भुगतान/वसूली</option>
+<option value="asset" data-i18n="asset">संपत्ति खरीद/बिक्री</option>
+</select></div>
+</div>
+<div class="row"><span class="muted" id="historyTotal"></span><button class="btn secondary small" onclick="clearFilters()" data-i18n="clear_filter">फ़िल्टर हटाएँ</button></div></div>
+<div class="card" id="historyList"></div>
+</div>
+<div class="subview" id="passEdit">
+<div class="notice" data-i18n="del_note">किसी एंट्री को हटाने से उससे जुड़े सभी खाते के बैलेंस वापस समायोजित होंगे।</div>
+<div class="card" id="historyEditList"></div>
+</div>
+<div class="subview" id="passSaving">
+<div class="subtabs passbook-tabs">
+<button class="subtile active" onclick="savingDetail('income')"><span class="ico">↗</span><strong data-i18n="this_month_inc">इस माह आय</strong><small data-i18n="inc_entries">आय की एंट्री</small></button>
+<button class="subtile" onclick="savingDetail('expense')"><span class="ico">🛒</span><strong data-i18n="this_month_exp">इस माह खर्च</strong><small data-i18n="exp_entries">खर्च की एंट्री</small></button>
+<button class="subtile" onclick="savingDetail('saving')"><span class="ico">₹</span><strong data-i18n="this_month_sav">इस माह बचत</strong><small data-i18n="inc_minus_exp">आय घटा खर्च</small></button>
+</div>
+<div class="card" id="savingDetailContent"><div class="empty" data-i18n="select_above">ऊपर आय, खर्च या बचत चुनें।</div></div>
+</div>
+</section>
+
+<section id="graph" class="page"><h2 class="section-title" data-i18n="charts_alerts">चार्ट एंड अलर्ट</h2>
+<div class="subtabs">
+<button class="subtile active" onclick="graphView('income',this)"><span class="ico">▥</span><strong class="txt-blue" data-i18n="inc_vs_exp">आय बनाम खर्च</strong><small data-i18n="monthly_comp">मासिक तुलना</small></button>
+<button class="subtile" onclick="graphView('category',this)"><span class="ico">◉</span><strong class="txt-red" data-i18n="exp_dist">खर्च का वितरण</strong><small data-i18n="exp_dist_desc">किस मद में कितना खर्च</small></button>
+<button class="subtile" onclick="graphView('trend',this)"><span class="ico">⌁</span><strong class="txt-green" data-i18n="trend">आय, खर्च और नेटवर्थ</strong><small data-i18n="trend_desc">तीन लाइन का ग्राफ</small></button>
+</div>
+<div class="card"><div class="field"><label data-i18n="period">अवधि</label><select id="graphPeriod" onchange="renderGraph()">
+<option value="6" data-i18n="last_6m">पिछले 6 महीने</option>
+<option value="12" data-i18n="last_12m">पिछले 12 महीने</option>
+</select></div></div>
+<div id="graphIncomeView" class="subview active"><div class="card"><strong data-i18n="monthly_inc_vs_exp">मासिक आय बनाम खर्च</strong><div class="chartwrap"><canvas id="incomeExpenseChart" width="700" height="260"></canvas></div></div></div>
+<div id="graphCategoryView" class="subview"><div class="card"><strong data-i18n="this_month_exp_dist">इस माह खर्च का वितरण</strong><div class="chartwrap"><canvas id="categoryChart" width="700" height="260"></canvas></div><div id="categoryLegend"></div></div></div>
+<div id="graphTrendView" class="subview"><div class="card"><strong data-i18n="trend_3_lines">आय, खर्च और नेटवर्थ — तीन लाइनें</strong><div class="chartwrap"><canvas id="trendChart" width="700" height="300"></canvas></div></div></div>
+<div class="notice" data-i18n="graph_note">ग्राफ दर्ज एंट्री और खाते के बैलेंस पर आधारित हैं।</div>
+
+<h2 class="section-title" data-i18n="savings_alerts">बचत और मासिक हिसाब (अलर्ट)</h2>
+<div class="grid" id="savingsMetrics"></div>
+<div class="card">
+  <h3 style="margin:0 0 10px;font-size:15px" data-i18n="daily_target">दैनिक बचत अलर्ट के लिए लक्ष्य</h3>
+  <div class="formgrid">
+    <div class="field full"><label data-i18n="est_income">मासिक अनुमानित आय (₹)</label><input id="monthlyIncomeTarget" type="number" min="0" step="1" placeholder="जैसे 30000"></div>
+    <div class="field full"><label data-i18n="days_month">महीने के दिन</label><select id="monthDays">
+      <option value="30" data-i18n="days_30">30 दिन (औसत)</option>
+      <option value="31" data-i18n="days_31">31 दिन</option>
+      <option value="28" data-i18n="days_28">28 दिन</option>
+      <option value="29" data-i18n="days_29">29 दिन</option>
+    </select></div>
+  </div>
+  <button class="btn" style="margin-top:10px" onclick="saveSavingsSettings()" data-i18n="save_target">लक्ष्य सेव करें</button>
+</div>
+<div class="card" id="dailySavingsAlert" aria-live="polite"></div>
+<div class="card">
+  <strong data-i18n="last_6m_savings">पिछले 6 महीने की मासिक बचत</strong>
+  <div class="chartwrap"><canvas id="savingsChart" width="700" height="260"></canvas></div>
+  <div id="savingsHistory"></div>
+</div>
+</section>
+
+<section id="tools" class="page"><h2 class="section-title" data-i18n="smart_features">स्मार्ट सुविधाएँ</h2>
+<div class="grid">
+<div class="featuretile"><strong data-i18n="pay_cal">📅 भुगतान कैलेंडर</strong><small data-i18n="pay_cal_desc">आने वाली किस्तें और कार्ड बिल</small></div>
+<div class="featuretile"><strong data-i18n="calc">🏦 RD / FD कैलकुलेटर</strong><small data-i18n="calc_desc">ब्याज व मैच्योरिटी का अनुमान</small></div>
+<div class="featuretile"><strong data-i18n="privacy">🔐 निजता मोड</strong><small data-i18n="privacy_desc">रकम स्क्रीन पर छिपाएँ</small></div>
+<div class="featuretile"><strong data-i18n="reports">📊 रिपोर्ट</strong><small data-i18n="reports_desc">CSV निर्यात और प्रिंट रिपोर्ट</small></div>
+</div>
+<h2 class="section-title" data-i18n="smart_cal">📅 स्मार्ट ट्रांजेक्शन कैलेंडर</h2>
+<div class="card">
+  <div class="row" style="align-items:center;justify-content:space-between"><button class="btn secondary small" onclick="smartCalendarMonth(-1)">‹ <span data-i18n="prev">पिछला</span></button><strong id="smartCalTitle">इस महीने की तारीखें</strong><button class="btn secondary small" onclick="smartCalendarMonth(1)"><span data-i18n="next">अगला</span> ›</button></div>
+  <p class="hint" data-i18n="cal_hint">तारीख पर दबाकर रखें और आखिरी तारीख तक ड्रैग करें। एक तारीख पर टैप करने से वही दिन चुनेगा।</p>
+  <div id="smartCalendar" class="smart-calendar" aria-label="ट्रांजेक्शन कैलेंडर"></div>
+  <div class="filterrow" style="margin-top:12px">
+    <div class="field"><label data-i18n="exp_cat">खर्च की मद</label><select id="smartCat"><option value="" data-i18n="all_cats">सभी मदें</option></select></div>
+    <div class="field"><label data-i18n="acc">खाता</label><select id="smartAccount"><option value="" data-i18n="all_accs">सभी खाते</option></select></div>
+    <div class="field"><label data-i18n="entry_type">ट्रांजेक्शन प्रकार</label><select id="smartType"><option value="" data-i18n="all">सभी प्रकार</option><option value="expense" data-i18n="record_exp">खर्च</option><option value="bankdeposit" data-i18n="bank_deposit">बैंक जमा / आय</option><option value="pay" data-i18n="pay_bill">कार्ड / लोन भुगतान</option><option value="familypay" data-i18n="fam_loan">पारिवारिक लोन</option><option value="investment" data-i18n="invest">निवेश</option><option value="adjust" data-i18n="adjust">ब्याज / पेनल्टी</option></select></div>
+  </div>
+  <div id="smartDateRange" class="notice" data-i18n="select_date">कैलेंडर से तारीख चुनें।</div>
+  <div id="smartTxnResults"></div>
+</div>
+<h2 class="section-title" data-i18n="upcoming_pay">आने वाले भुगतान</h2><div class="card" id="dueList"></div>
+<h2 class="section-title" data-i18n="report_sec">रिपोर्ट और डेटा सुरक्षा</h2>
+<div class="card"><div class="actions">
+<button class="btn" onclick="exportData()" data-i18n="json_backup">JSON बैकअप डाउनलोड</button>
+<label class="btn secondary filelabel"><span data-i18n="restore">बैकअप रीस्टोर</span><input type="file" accept="application/json" onchange="importData(event)" hidden></label>
+<button class="btn secondary" onclick="printReport()" data-i18n="print_report">रिपोर्ट प्रिंट / PDF</button>
+<button class="btn secondary" id="privacyBtn" onclick="togglePrivacy()" data-i18n="hide_amt">रकम छिपाएँ 🔒</button>
+</div>
+<p class="hint" data-i18n="restore_hint">रीस्टोर करने से पहले वर्तमान डेटा का बैकअप लें।</p>
+</div>
+<h2 class="section-title" data-i18n="month_summary">मासिक सारांश</h2><div class="card" id="monthlySummary"></div>
+</section>
+
+<section id="profile" class="page">
+  <h2 class="section-title" data-i18n="profile">मेरी प्रोफाइल</h2>
+  <div class="card" id="profileContent"></div>
+  <div class="card" id="profileEditBox" style="display:none">
+    <h3 style="margin:0 0 10px;font-size:15px" data-i18n="edit_profile">प्रोफाइल संपादित करें</h3>
+    <form id="profileEditForm">
+      <div class="field"><label for="epName" data-i18n="name">नाम</label><input id="epName" required></div>
+      <div class="field"><label for="epMobile" data-i18n="mobile">मोबाइल नंबर</label><input id="epMobile" required></div>
+      <div class="field"><label for="epEmail" data-i18n="email">ईमेल</label><input id="epEmail" type="email" required></div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn" type="submit" data-i18n="save">सेव करें</button>
+        <button class="btn secondary" type="button" onclick="cancelProfileEdit()" data-i18n="cancel">रद्द करें</button>
+      </div>
+      <div class="auth-msg" id="profileEditMsg"></div>
+    </form>
+  </div>
+</section>
+
+<section id="expenseSetup" class="page">
+  <div class="backline"><button onclick="navigateTo('entry')">‹ <span data-i18n="entry">एंट्री</span></button></div>
+  <h2 class="section-title">🛒 <span data-i18n="exp_cat">खर्च की मद</span></h2>
+  <div class="subtabs">
+    <button class="subtile active" id="expAddTab" onclick="catSetupTab('expense','add')"><span class="ico">＋</span><strong data-i18n="add_exp_cat">खर्च की मद जोड़ें</strong><small data-i18n="new_cat">नई मद बनाएँ</small></button>
+    <button class="subtile" id="expEditTab" onclick="catSetupTab('expense','edit')"><span class="ico">✎</span><strong data-i18n="edit_exp_cat">खर्च की मद संपादित करें</strong><small data-i18n="edit_del_cat">नाम बदलें / हटाएँ</small></button>
+  </div>
+  <div id="expAddView" class="subview active">
+    <div class="card">
+      <form id="expAddForm">
+        <div class="field"><label data-i18n="exp_cat_name">खर्च की मद का नाम</label><input id="expAddName" placeholder="जैसे दूध, पेट्रोल, किराना" required></div>
+        <p class="hint" data-i18n="exp_cat_hint">यह मद खर्च दर्ज करते समय "To" में दिखेगी।</p>
+        <button class="btn" type="submit" style="margin-top:8px" data-i18n="add_cat_btn">मद जोड़ें</button>
+      </form>
+    </div>
+  </div>
+  <div id="expEditView" class="subview">
+    <div class="card" id="expEditList"></div>
+  </div>
+</section>
+
+<section id="incomeSetup" class="page">
+  <div class="backline"><button onclick="navigateTo('entry')">‹ <span data-i18n="entry">एंट्री</span></button></div>
+  <h2 class="section-title">💰 <span data-i18n="inc_cat">आय की मद</span></h2>
+  <div class="subtabs">
+    <button class="subtile active" id="incAddTab" onclick="catSetupTab('income','add')"><span class="ico">＋</span><strong data-i18n="add_inc_cat">आय की मद जोड़ें</strong><small data-i18n="new_source">नया स्रोत बनाएँ</small></button>
+    <button class="subtile" id="incEditTab" onclick="catSetupTab('income','edit')"><span class="ico">✎</span><strong data-i18n="edit_inc_cat">आय की मद संपादित करें</strong><small data-i18n="edit_del_cat">नाम बदलें / हटाएँ</small></button>
+  </div>
+  <div id="incAddView" class="subview active">
+    <div class="card">
+      <form id="incAddForm">
+        <div class="field"><label data-i18n="inc_src_name">आय के स्रोत का नाम</label><input id="incAddName" placeholder="जैसे बिजनेस, किराया, ब्याज" required></div>
+        <p class="hint" data-i18n="inc_cat_hint">यह मद बैंक डिपॉजिट में "From" (CR) में दिखेगी और आय गिनी जाएगी।</p>
+        <button class="btn" type="submit" style="margin-top:8px" data-i18n="add_cat_btn">मद जोड़ें</button>
+      </form>
+    </div>
+  </div>
+  <div id="incEditView" class="subview">
+    <div class="card" id="incEditList"></div>
+  </div>
+</section>
+
+<div class="foot" data-i18n="foot_text">MD Account & Budget Management</div>
+</main>
+
+<button class="fab" onclick="navigateTo('entry'); document.querySelector('input[type=number]')?.focus();" aria-label="Quick Add">+</button>
+
+<script>
+/* ============================================================
+   TRANSLATION SYSTEM
+   ============================================================ */
+const dict = {
+  app_title: {hi:"एमडी अकाउंट एंड बजट मैनेजमेंट", en:"MD Account & Budget Management"},
+  app_sub: {hi:"व्यक्तिगत आय-व्यय और वित्तीय स्थिति", en:"Personal Finance & Status"},
+  personal_record: {hi:"आपका निजी वित्तीय रिकॉर्ड", en:"Your personal financial record"},
+  foot_text: {hi:"MD Account & Budget Management", en:"MD Account & Budget Management"},
+  dashboard: {hi:"डैशबोर्ड", en:"Dashboard"},
+  entry: {hi:"एंट्री", en:"Entry"},
+  accounts: {hi:"खाते", en:"Accounts"},
+  passbook: {hi:"पासबुक", en:"Passbook"},
+  charts_alerts: {hi:"चार्ट एंड अलर्ट", en:"Charts & Alerts"},
+  tools: {hi:"अन्य सुविधाएँ", en:"Other Tools"},
+  profile: {hi:"मेरी प्रोफाइल", en:"My Profile"},
+  quick_exp: {hi:"तेज़ी से खर्च जोड़ें", en:"Quick Add Expense"},
+  quick_inc: {hi:"तेज़ी से आय जोड़ें", en:"Quick Add Income"},
+  privacy_msg: {hi:"आपका समस्त डेटा आपके फोन में सुरक्षित है, इसलिए कृपया नियमित बैकअप लेते रहें।", en:"All your data is safe on your phone, so please take regular backups."},
+  bank_cash: {hi:"बैंक + नकद", en:"Bank + Cash"},
+  bank_cash_desc: {hi:"बैंक खाते और उपलब्ध नकद", en:"Bank accounts & available cash"},
+  fam_given_short: {hi:"पारिवारिक लोन (जो दिया है)", en:"Family Loan (Given)"},
+  fam_given_desc: {hi:"वापस मिलने वाली रकम", en:"Amount to recover"},
+  card_due: {hi:"क्रेडिट कार्ड बकाया", en:"Credit Card Due"},
+  card_due_desc: {hi:"कुल उपयोग की गई लिमिट", en:"Total used limit"},
+  loan_due: {hi:"लोन बकाया", en:"Loan Balance"},
+  loan_due_desc: {hi:"बैंक लोन + पारिवारिक लोन (लिया)", en:"Bank loan + Family loan (taken)"},
+  net_worth: {hi:"अनुमानित नेटवर्थ", en:"Estimated Net Worth"},
+  net_worth_desc: {hi:"संपत्ति − देनदारियाँ", en:"Assets − Liabilities"},
+  tap_details: {hi:"विवरण ›", en:"Details ›"},
+  tap_full_details: {hi:"पूरा विवरण देखने के लिए यहाँ टैप करें ›", en:"Tap here to view full details ›"},
+  bank_cash_details: {hi:"बैंक + नकद का विवरण", en:"Bank + Cash Details"},
+  bank_accounts: {hi:"बैंक खाते", en:"Bank Accounts"},
+  cash_accounts: {hi:"नकद खाते", en:"Cash Accounts"},
+  total_available: {hi:"कुल उपलब्ध रकम", en:"Total Available Amount"},
+  fam_given: {hi:"पारिवारिक लोन (जो दिया है)", en:"Family Loan (Given)"},
+  total_recoverable: {hi:"कुल वसूली योग्य रकम", en:"Total Recoverable"},
+  no_fam_loan: {hi:"अभी कोई पारिवारिक लोन दर्ज नहीं है।", en:"No family loan recorded yet."},
+  card_details: {hi:"क्रेडिट कार्ड का विवरण", en:"Credit Card Details"},
+  credit_card: {hi:"क्रेडिट कार्ड", en:"Credit Card"},
+  due: {hi:"बकाया", en:"Due"},
+  total_card_due: {hi:"कुल कार्ड बकाया", en:"Total Card Due"},
+  no_card: {hi:"अभी कोई क्रेडिट कार्ड नहीं जोड़ा गया है।", en:"No credit card added yet."},
+  loan_details: {hi:"लोन बकाया का विवरण", en:"Loan Balance Details"},
+  bank_loan: {hi:"बैंक लोन", en:"Bank Loan"},
+  family_loan: {hi:"पारिवारिक लोन", en:"Family Loan"},
+  total_loan: {hi:"कुल लोन बकाया", en:"Total Loan Balance"},
+  networth_details: {hi:"अनुमानित नेटवर्थ का विवरण", en:"Estimated Net Worth Details"},
+  given_to_family: {hi:"परिवार / मित्र को दिया लोन", en:"Loan given to family/friends"},
+  gold: {hi:"सोना", en:"Gold"},
+  silver: {hi:"चांदी", en:"Silver"},
+  land: {hi:"जमीन", en:"Land"},
+  networth: {hi:"अनुमानित नेटवर्थ", en:"Estimated Net Worth"},
+  nothing: {hi:"कुछ नहीं।", en:"Nothing."},
+  back: {hi:"वापस", en:"Back"},
+  transactions: {hi:"ट्रांजेक्शन", en:"Transactions"},
+  no_entries: {hi:"कोई एंट्री नहीं है।", en:"No entries."},
+  add_acc: {hi:"खाते जोड़ें", en:"Add Account"},
+  add_acc_desc: {hi:"बैंक, कार्ड, लोन, निवेश और अन्य खाते", en:"Bank, Card, Loan, Investment & other accounts"},
+  edit_acc: {hi:"खाते संपादित करें", en:"Edit Account"},
+  edit_acc_desc: {hi:"सिर्फ बैंक/कार्ड/लोन/नकद/निवेश/संपत्ति", en:"Only Bank/Card/Loan/Cash/Investment/Assets"},
+  acc_type: {hi:"खाते का प्रकार", en:"Account Type"},
+  bank: {hi:"बैंक / सैलरी खाता", en:"Bank / Salary Account"},
+  card: {hi:"क्रेडिट कार्ड", en:"Credit Card"},
+  loan: {hi:"बैंक लोन", en:"Bank Loan"},
+  fam_taken: {hi:"पारिवारिक लोन (जो लिया है)", en:"Family Loan (Taken)"},
+  invest: {hi:"जमा खाता / पब्लिक इन्वेस्टमेंट", en:"Deposit Account / Public Investment"},
+  gold_full: {hi:"सोना (Gold)", en:"Gold"},
+  silver_full: {hi:"चांदी (Silver)", en:"Silver"},
+  land_full: {hi:"जमीन / प्रॉपर्टी (Land)", en:"Land / Property"},
+  cash: {hi:"नकद", en:"Cash"},
+  name_lbl: {hi:"बैंक का नाम / खाते का नाम", en:"Bank Name / Account Name"},
+  balance: {hi:"वर्तमान बैलेंस (₹)", en:"Current Balance (₹)"},
+  weight: {hi:"मात्रा (ग्राम/यूनिट)", en:"Quantity (Gram/Unit)"},
+  limit: {hi:"क्रेडिट कार्ड कुल लिमिट (₹)", en:"Credit Card Total Limit (₹)"},
+  avail_limit: {hi:"वर्तमान उपलब्ध लिमिट (₹)", en:"Current Available Limit (₹)"},
+  emi: {hi:"मासिक किस्त (₹)", en:"Monthly EMI (₹)"},
+  acc_note: {hi:"सुरक्षा के लिए पूरा बैंक/कार्ड नंबर या PIN न भरें।", en:"Do not enter full bank/card number or PIN for security."},
+  save: {hi:"सेव करें", en:"Save"},
+  my_active_acc: {hi:"मेरे सक्रिय खाते", en:"My Active Accounts"},
+  closed_acc: {hi:"बंद खाते", en:"Closed Accounts"},
+  no_active_acc: {hi:"कोई सक्रिय खाता नहीं है।", en:"No active accounts."},
+  no_closed_acc: {hi:"अभी कोई बंद खाता नहीं है।", en:"No closed accounts yet."},
+  closed: {hi:"बंद", en:"Closed"},
+  reactivate: {hi:"फिर सक्रिय करें", en:"Reactivate"},
+  delete_permanently: {hi:"स्थायी रूप से हटाएँ", en:"Delete Permanently"},
+  edit: {hi:"संपादित करें", en:"Edit"},
+  close_delete: {hi:"बंद करें / हटाएँ", en:"Close / Delete"},
+  bank_salary: {hi:"बैंक / सैलरी", en:"Bank / Salary"},
+  fam_loan_given: {hi:"पारिवारिक लोन (दिया)", en:"Family Loan (Given)"},
+  fam_loan_taken: {hi:"पारिवारिक लोन (लिया)", en:"Family Loan (Taken)"},
+  deposit_acc: {hi:"जमा खाता", en:"Deposit Account"},
+  other: {hi:"अन्य", en:"Other"},
+  reactivate_confirm: {hi:"इस खाते को फिर सक्रिय करें?", en:"Reactivate this account?"},
+  bank_deposit: {hi:"बैंक डिपॉजिट / विड्रॉल / इनकम", en:"Bank Deposit / Withdrawal / Income"},
+  bank_deposit_desc: {hi:"अकाउंट ट्रांसफर, सैलरी, नकद जमा", en:"Account transfer, salary, cash deposit"},
+  add_inc_cat: {hi:"आय की मद जोड़ें", en:"Add Income Category"},
+  add_inc_desc: {hi:"सैलरी के अलावा आय के स्रोत बनाएँ", en:"Create income sources besides salary"},
+  add_exp_cat: {hi:"खर्च की मद जोड़ें", en:"Add Expense Category"},
+  add_exp_desc: {hi:"दूध, पेट्रोल और अन्य खर्च की मदें बनाएँ", en:"Create categories for milk, fuel, etc."},
+  record_exp: {hi:"खर्च दर्ज करें", en:"Record Expense"},
+  record_exp_desc: {hi:"रोजमर्रा की खरीदारी", en:"Daily purchases"},
+  pay_bill: {hi:"किस्त / कार्ड बिल जमा", en:"Pay EMI / Card Bill"},
+  pay_bill_desc: {hi:"लोन किस्त या क्रेडिट कार्ड बिल", en:"Loan EMI or Credit Card Bill"},
+  adjust: {hi:"ब्याज / पेनल्टी / रिवॉर्ड", en:"Interest / Penalty / Reward"},
+  adjust_desc: {hi:"ब्याज, शुल्क और क्रेडिट", en:"Interest, fees, and credit"},
+  fam_loan: {hi:"पारिवारिक लोन चुकाना / वसूलना", en:"Repay / Recover Family Loan"},
+  fam_loan_desc: {hi:"जो लिया है उसे चुकाएँ, जो दिया है उसे वसूलें", en:"Repay what you took, recover what you gave"},
+  asset: {hi:"संपत्ति (सोना/चांदी/जमीन) खरीदें/बेचें", en:"Buy/Sell Asset (Gold/Silver/Land)"},
+  asset_desc: {hi:"एसेट का स्टॉक और ट्रांजेक्शन", en:"Asset stock and transactions"},
+  invest_buy: {hi:"निवेश खरीदें / बेचें", en:"Buy / Sell Investment"},
+  invest_desc: {hi:"RD, FD, PPF और NPS में जमा / निकासी", en:"Deposit/Withdraw in RD, FD, PPF, NPS"},
+  entry_type: {hi:"एंट्री का प्रकार", en:"Entry Type"},
+  card_bill_loan_emi: {hi:"क्रेडिट कार्ड बिल / लोन किस्त", en:"Credit Card Bill / Loan EMI"},
+  interest_penalty: {hi:"ब्याज / पेनल्टी", en:"Interest / Penalty"},
+  asset_buy_sell: {hi:"संपत्ति खरीदें/बेचें", en:"Buy/Sell Asset"},
+  invest_buy_sell: {hi:"निवेश खरीदें/बेचें", en:"Buy/Sell Investment"},
+  cash_fee: {hi:"नकद निकासी शुल्क (₹)", en:"Cash withdrawal fee (₹)"},
+  amount: {hi:"रकम (₹)", en:"Amount (₹)"},
+  date: {hi:"तारीख", en:"Date"},
+  note_opt: {hi:"विवरण (वैकल्पिक)", en:"Description (Optional)"},
+  note_ph: {hi:"जैसे कंप्यूटर मरम्मत / अक्टूबर सैलरी", en:"e.g. Computer repair / October salary"},
+  fill_save: {hi:"विवरण भरकर सेव करें।", en:"Fill details and save."},
+  save_entry: {hi:"एंट्री सेव करें", en:"Save Entry"},
+  dr_deposit: {hi:"DR (डेबिट) — किस खाते में जमा करना है?", en:"DR (Debit) — Which account to deposit into?"},
+  cr_source: {hi:"CR (क्रेडिट) — पैसा कहाँ से आ रहा है?", en:"CR (Credit) — Where is the money coming from?"},
+  deposit_into: {hi:"किसमें जमा करें?", en:"Deposit into?"},
+  money_from: {hi:"पैसा कहाँ से आ रहा है?", en:"Where is money from?"},
+  hint_bankdep: {hi:"DR में जमा होने वाला खाता और CR में स्रोत चुनें। सैलरी/आय स्रोत चुनने पर इनकम होगी।", en:"Select deposit account in DR and source in CR. Salary/income source counts as income."},
+  dr_card_loan: {hi:"DR (डेबिट) — किस कार्ड / लोन का बिल जमा करना है?", en:"DR (Debit) — Which card/loan bill to pay?"},
+  cr_pay_from: {hi:"CR (क्रेडिट) — भुगतान कहाँ से कर रहे हैं?", en:"CR (Credit) — Where are you paying from?"},
+  sel_card_loan: {hi:"कार्ड / बैंक लोन / पारिवारिक लोन चुनें", en:"Select Card / Bank Loan / Family Loan"},
+  sel_bank_cash: {hi:"बैंक / नकद चुनें", en:"Select Bank / Cash"},
+  hint_pay: {hi:"कार्ड बिल या लोन किस्त जमा करने पर खर्च नहीं गिना जाएगा।", en:"Paying card bill or loan EMI is not counted as expense."},
+  dr_exp_cat: {hi:"DR (डेबिट) — किस मद पर खर्च किया?", en:"DR (Debit) — Which category was spent on?"},
+  cr_pay_mode: {hi:"CR (क्रेडिट) — भुगतान किस माध्यम से किया?", en:"CR (Credit) — Payment method?"},
+  sel_exp_cat: {hi:"खर्च की मद चुनें", en:"Select expense category"},
+  sel_bank_card_cash: {hi:"बैंक / कार्ड / नकद चुनें", en:"Select Bank / Card / Cash"},
+  hint_expense: {hi:"To में खर्च की मद और From में भुगतान का स्रोत चुनें।", en:"Select expense category in To and payment source in From."},
+  dr_interest: {hi:"DR (डेबिट) — ब्याज/रिवॉर्ड किस खाते में जाएगा?", en:"DR (Debit) — Which account gets interest/reward?"},
+  cr_interest: {hi:"CR (क्रेडिट) — किस खाते पर ब्याज/पेनल्टी लगी?", en:"CR (Credit) — Which account was charged interest/penalty?"},
+  sel_dr: {hi:"DR खाता चुनें", en:"Select DR account"},
+  sel_cr: {hi:"CR खाता चुनें", en:"Select CR account"},
+  hint_adjust: {hi:"DR/CR में खाते चुनकर ब्याज, पेनल्टी या रिवॉर्ड दर्ज करें।", en:"Select accounts in DR/CR to record interest, penalty, or reward."},
+  dr_family: {hi:"DR (डेबिट) — किस खाते/व्यक्ति को भुगतान है?", en:"DR (Debit) — Paying to which account/person?"},
+  cr_family: {hi:"CR (क्रेडिट) — पैसा किस खाते से है?", en:"CR (Credit) — Money from which account?"},
+  sel_to: {hi:"To चुनें", en:"Select To"},
+  sel_from: {hi:"From चुनें", en:"Select From"},
+  hint_family: {hi:"To में व्यक्ति/खाता, From में स्रोत चुनें।", en:"Select person/account in To and source in From."},
+  dr_asset: {hi:"DR (डेबिट) — क्या खरीद रहे हैं / कहाँ पैसे जा रहे हैं?", en:"DR (Debit) — Buying what / where is money going?"},
+  cr_asset: {hi:"CR (क्रेडिट) — क्या बेच रहे हैं / पैसे कहाँ से आए?", en:"CR (Credit) — Selling what / where did money come from?"},
+  hint_asset: {hi:"खरीदने के लिए DR में संपत्ति और CR में बैंक/नकद चुनें; बेचने के लिए उल्टा।", en:"To buy, select asset in DR and bank/cash in CR; reverse for selling."},
+  dr_invest: {hi:"DR (डेबिट) — निवेश खाता / जमा कहाँ होगी?", en:"DR (Debit) — Investment account / where to deposit?"},
+  cr_invest: {hi:"CR (क्रेडिट) — पैसा कहाँ से आएगा / कौन-सा निवेश बेचेंगे?", en:"CR (Credit) — Where will money come from / which investment to sell?"},
+  sel_inv_bank_cash: {hi:"निवेश / बैंक / नकद चुनें", en:"Select Investment / Bank / Cash"},
+  sel_bank_cash_inv: {hi:"बैंक / नकद / निवेश चुनें", en:"Select Bank / Cash / Investment"},
+  hint_invest: {hi:"निवेश जमा करने के लिए DR में निवेश और CR में बैंक/नकद चुनें।", en:"To deposit in investment, select investment in DR and bank/cash in CR."},
+  salary: {hi:"सैलरी (Salary)", en:"Salary"},
+  income_prefix: {hi:"आय: ", en:"Income: "},
+  view_txn: {hi:"ट्रांजेक्शन देखें", en:"View Transactions"},
+  view_txn_desc: {hi:"खाता-वार और तारीख-वार", en:"Account-wise and date-wise"},
+  del_txn: {hi:"ट्रांजेक्शन हटाएँ", en:"Delete Transaction"},
+  del_txn_desc: {hi:"गलत एंट्री हटाएँ", en:"Delete wrong entry"},
+  saving_detail: {hi:"बचत का विवरण", en:"Savings Details"},
+  saving_desc: {hi:"माह की आय, खर्च, बचत", en:"Month's income, expense, savings"},
+  all_txn: {hi:"सभी ट्रांजेक्शन", en:"All Transactions"},
+  date_from: {hi:"तारीख से", en:"From Date"},
+  date_to: {hi:"तारीख तक", en:"To Date"},
+  excel_dl: {hi:"📊 Excel (CSV) डाउनलोड", en:"📊 Download Excel (CSV)"},
+  pdf_dl: {hi:"📄 PDF डाउनलोड", en:"📄 Download PDF"},
+  statement_hint: {hi:"चुनी गई तारीखों और फिल्टर के अनुसार स्टेटमेंट डाउनलोड करें।", en:"Download statement as per selected dates and filters."},
+  search: {hi:"खोजें (विवरण / नोट)", en:"Search (Description / Note)"},
+  search_ph: {hi:"जैसे दूध, सैलरी...", en:"e.g. milk, salary..."},
+  exp_cat: {hi:"खर्च की मद", en:"Expense Category"},
+  acc: {hi:"बैंक / कार्ड / लोन", en:"Bank / Card / Loan"},
+  month: {hi:"महीना", en:"Month"},
+  all: {hi:"सभी प्रकार", en:"All Types"},
+  all_cats: {hi:"सभी मदें", en:"All Categories"},
+  all_accs: {hi:"सभी खाते", en:"All Accounts"},
+  all_cat_short: {hi:"सभी मद", en:"All Categories"},
+  all_acc_short: {hi:"सभी खाते", en:"All Accounts"},
+  all_6m: {hi:"सभी 6 महीने", en:"All 6 Months"},
+  bank_dep_income: {hi:"बैंक डिपॉजिट / आय", en:"Bank Deposit / Income"},
+  expense_short: {hi:"खर्च", en:"Expense"},
+  card_loan_pay: {hi:"कार्ड / लोन भुगतान", en:"Card / Loan Payment"},
+  family_pay_rec: {hi:"पारिवारिक लोन भुगतान/वसूली", en:"Family Loan Payment/Recovery"},
+  asset_buy_sell_short: {hi:"संपत्ति खरीद/बिक्री", en:"Asset Buy/Sell"},
+  clear_filter: {hi:"फ़िल्टर हटाएँ", en:"Clear Filters"},
+  total_expense: {hi:"कुल खर्च", en:"Total Expense"},
+  total_income: {hi:"कुल आय", en:"Total Income"},
+  expense_entries: {hi:"खर्च एंट्री", en:"expense entries"},
+  income_entries: {hi:"आय एंट्री", en:"income entries"},
+  entries: {hi:"एंट्री", en:"entries"},
+  no_entries_found: {hi:"कोई एंट्री नहीं मिली।", en:"No entries found."},
+  del_note: {hi:"किसी एंट्री को हटाने से उससे जुड़े सभी खाते के बैलेंस वापस समायोजित होंगे।", en:"Deleting an entry will adjust all related account balances."},
+  this_month_inc: {hi:"इस माह आय", en:"Income this month"},
+  this_month_exp: {hi:"इस माह खर्च", en:"Expense this month"},
+  this_month_sav: {hi:"इस माह बचत", en:"Savings this month"},
+  inc_entries: {hi:"आय की एंट्री", en:"Income entries"},
+  exp_entries: {hi:"खर्च की एंट्री", en:"Expense entries"},
+  inc_minus_exp: {hi:"आय घटा खर्च", en:"Income minus Expense"},
+  select_above: {hi:"ऊपर आय, खर्च या बचत चुनें।", en:"Select income, expense, or savings above."},
+  no_entries_short: {hi:"कोई एंट्री नहीं।", en:"No entries."},
+  income_this_month: {hi:"इस माह आय", en:"Income this month"},
+  expense_this_month: {hi:"इस माह खर्च", en:"Expense this month"},
+  savings_loss_this_month: {hi:"इस माह बचत / घाटा", en:"Savings / Loss this month"},
+  total_income_minus_exp: {hi:"कुल आय में से कुल खर्च घटाकर।", en:"Total income minus total expense."},
+  no_txn: {hi:"कोई ट्रांजेक्शन नहीं।", en:"No transactions."},
+  inc_vs_exp: {hi:"आय बनाम खर्च", en:"Income vs Expense"},
+  monthly_comp: {hi:"मासिक तुलना", en:"Monthly comparison"},
+  exp_dist: {hi:"खर्च का वितरण", en:"Expense Distribution"},
+  exp_dist_desc: {hi:"किस मद में कितना खर्च", en:"How much spent in which category"},
+  trend: {hi:"आय, खर्च और नेटवर्थ", en:"Income, Expense & Net Worth"},
+  trend_desc: {hi:"तीन लाइन का ग्राफ", en:"Three line graph"},
+  period: {hi:"अवधि", en:"Period"},
+  last_6m: {hi:"पिछले 6 महीने", en:"Last 6 Months"},
+  last_12m: {hi:"पिछले 12 महीने", en:"Last 12 Months"},
+  monthly_inc_vs_exp: {hi:"मासिक आय बनाम खर्च", en:"Monthly Income vs Expense"},
+  this_month_exp_dist: {hi:"इस माह खर्च का वितरण", en:"Expense Distribution This Month"},
+  trend_3_lines: {hi:"आय, खर्च और नेटवर्थ — तीन लाइनें", en:"Income, Expense & Net Worth — 3 Lines"},
+  graph_note: {hi:"ग्राफ दर्ज एंट्री और खाते के बैलेंस पर आधारित हैं।", en:"Graphs are based on recorded entries and account balances."},
+  savings_alerts: {hi:"बचत और मासिक हिसाब (अलर्ट)", en:"Savings & Monthly Calc (Alerts)"},
+  daily_target: {hi:"दैनिक बचत अलर्ट के लिए लक्ष्य", en:"Target for daily savings alert"},
+  est_income: {hi:"मासिक अनुमानित आय (₹)", en:"Estimated Monthly Income (₹)"},
+  est_income_ph: {hi:"जैसे 30000", en:"e.g. 30000"},
+  days_month: {hi:"महीने के दिन", en:"Days in month"},
+  days_30: {hi:"30 दिन (औसत)", en:"30 days (avg)"},
+  days_31: {hi:"31 दिन", en:"31 days"},
+  days_28: {hi:"28 दिन", en:"28 days"},
+  days_29: {hi:"29 दिन", en:"29 days"},
+  save_target: {hi:"लक्ष्य सेव करें", en:"Save Target"},
+  last_6m_savings: {hi:"पिछले 6 महीने की मासिक बचत", en:"Monthly savings for last 6 months"},
+  recorded_income: {hi:"इस माह दर्ज आय", en:"Recorded Income This Month"},
+  income_entries2: {hi:"आय एंट्रियाँ", en:"Income entries"},
+  expense_this_month_full: {hi:"इस माह खर्च", en:"Expense This Month"},
+  only_exp_entries: {hi:"केवल खर्च एंट्रियाँ", en:"Only expense entries"},
+  monthly_savings_loss: {hi:"मासिक बचत / घाटा", en:"Monthly Savings / Loss"},
+  exp_gt_inc: {hi:"खर्च आय से अधिक", en:"Expense > Income"},
+  income_minus_exp: {hi:"आय में से खर्च घटाकर", en:"Income minus Expense"},
+  today_exp_sav: {hi:"आज का खर्च और बचत", en:"Today's Expense & Savings"},
+  est_daily_income: {hi:"अनुमानित दैनिक आय", en:"Estimated Daily Income"},
+  today_recorded_exp: {hi:"आज का दर्ज खर्च", en:"Today's Recorded Expense"},
+  today_sav_extra: {hi:"आज की बचत / अतिरिक्त खर्च", en:"Today's Savings / Extra Expense"},
+  daily_sav_alert: {hi:"दैनिक बचत अलर्ट", en:"Daily Savings Alert"},
+  enter_est_income: {hi:"दैनिक अनुमान के लिए ऊपर अनुमानित मासिक आय भरें।", en:"Enter estimated monthly income above for daily estimate."},
+  inc: {hi:"आय", en:"Inc"},
+  exp: {hi:"खर्च", en:"Exp"},
+  smart_features: {hi:"स्मार्ट सुविधाएँ", en:"Smart Features"},
+  pay_cal: {hi:"📅 भुगतान कैलेंडर", en:"📅 Payment Calendar"},
+  pay_cal_desc: {hi:"आने वाली किस्तें और कार्ड बिल", en:"Upcoming EMIs and card bills"},
+  calc: {hi:"🏦 RD / FD कैलकुलेटर", en:"🏦 RD / FD Calculator"},
+  calc_desc: {hi:"ब्याज व मैच्योरिटी का अनुमान", en:"Estimate interest and maturity"},
+  privacy: {hi:"🔐 निजता मोड", en:"🔐 Privacy Mode"},
+  privacy_desc: {hi:"रकम स्क्रीन पर छिपाएँ", en:"Hide amounts on screen"},
+  reports: {hi:"📊 रिपोर्ट", en:"📊 Reports"},
+  reports_desc: {hi:"CSV निर्यात और प्रिंट रिपोर्ट", en:"CSV export and print report"},
+  smart_cal: {hi:"📅 स्मार्ट ट्रांजेक्शन कैलेंडर", en:"📅 Smart Transaction Calendar"},
+  prev: {hi:"पिछला", en:"Prev"},
+  next: {hi:"अगला", en:"Next"},
+  cal_title_default: {hi:"इस महीने की तारीखें", en:"Dates this month"},
+  cal_hint: {hi:"तारीख पर दबाकर रखें और आखिरी तारीख तक ड्रैग करें। एक तारीख पर टैप करने से वही दिन चुनेगा।", en:"Press and hold a date and drag to the end date. Tapping a date selects that day."},
+  select_date: {hi:"कैलेंडर से तारीख चुनें।", en:"Select dates from calendar."},
+  selected_dates: {hi:"चुनी गई तारीखें", en:"Selected dates"},
+  txn_word: {hi:"ट्रांजेक्शन", en:"transactions"},
+  nothing_period: {hi:"इस अवधि में कुछ नहीं मिला।", en:"Nothing found in this period."},
+  upcoming_pay: {hi:"आने वाले भुगतान", en:"Upcoming Payments"},
+  loan_emi: {hi:"लोन किस्त", en:"Loan EMI"},
+  card_due_date: {hi:"क्रेडिट कार्ड भुगतान तारीख", en:"Credit Card Due Date"},
+  no_upcoming: {hi:"अभी कोई भुगतान तारीख नहीं मिली।", en:"No upcoming dates found."},
+  report_sec: {hi:"रिपोर्ट और डेटा सुरक्षा", en:"Reports & Data Security"},
+  json_backup: {hi:"JSON बैकअप डाउनलोड", en:"Download JSON Backup"},
+  restore: {hi:"बैकअप रीस्टोर", en:"Restore Backup"},
+  print_report: {hi:"रिपोर्ट प्रिंट / PDF", en:"Print Report / PDF"},
+  hide_amt: {hi:"रकम छिपाएँ 🔒", en:"Hide Amounts 🔒"},
+  show_amt: {hi:"रकम दिखाएँ 👁", en:"Show Amounts 👁"},
+  restore_hint: {hi:"रीस्टोर करने से पहले वर्तमान डेटा का बैकअप लें।", en:"Backup current data before restoring."},
+  month_summary: {hi:"मासिक सारांश", en:"Monthly Summary"},
+  diff: {hi:"अंतर", en:"Difference"},
+  profile_setup: {hi:"अपनी प्रोफाइल बनाएँ", en:"Create Your Profile"},
+  profile_setup_desc: {hi:"ऐप इस्तेमाल करने के लिए अपना नाम, मोबाइल नंबर और ईमेल आईडी दर्ज करें।", en:"Enter your name, mobile number, and email ID to use the app."},
+  name: {hi:"नाम", en:"Name"},
+  name_ph: {hi:"आपका नाम", en:"Your name"},
+  mobile: {hi:"मोबाइल नंबर", en:"Mobile Number"},
+  mobile_ph: {hi:"10 अंकों का मोबाइल", en:"10-digit mobile"},
+  email: {hi:"ईमेल आईडी", en:"Email ID"},
+  create_profile: {hi:"प्रोफाइल बनाएँ", en:"Create Profile"},
+  profile_note: {hi:"यह प्रोफाइल इसी डिवाइस/ब्राउज़र में सुरक्षित रहती है। अगली बार ऐप खोलने पर सीधे आपकी प्रोफाइल खुलेगी।", en:"This profile is saved in this device/browser. Next time your profile will open directly."},
+  edit_profile: {hi:"प्रोफाइल संपादित करें", en:"Edit Profile"},
+  cancel: {hi:"रद्द करें", en:"Cancel"},
+  profile_created: {hi:"प्रोफाइल बना", en:"Profile created"},
+  profile_not_created: {hi:"प्रोफाइल नहीं बनी।", en:"Profile not created."},
+  enter_full_name: {hi:"कृपया अपना पूरा नाम भरें।", en:"Please enter your full name."},
+  enter_valid_mobile: {hi:"सही 10 अंकों का मोबाइल नंबर भरें।", en:"Enter a valid 10-digit mobile number."},
+  enter_valid_email: {hi:"सही ईमेल आईडी भरें।", en:"Enter a valid email ID."},
+  profile_success: {hi:"प्रोफाइल बन गई!", en:"Profile created!"},
+  enter_valid_name: {hi:"नाम सही भरें।", en:"Enter a valid name."},
+  invalid_mobile: {hi:"मोबाइल सही नहीं है।", en:"Invalid mobile number."},
+  invalid_email: {hi:"ईमेल सही नहीं है।", en:"Invalid email."},
+  profile_updated: {hi:"प्रोफाइल अपडेट हो गई।", en:"Profile updated."},
+  new_cat: {hi:"नई मद बनाएँ", en:"Create new category"},
+  edit_exp_cat: {hi:"खर्च की मद संपादित करें", en:"Edit Expense Category"},
+  edit_inc_cat: {hi:"आय की मद संपादित करें", en:"Edit Income Category"},
+  edit_del_cat: {hi:"नाम बदलें / हटाएँ", en:"Rename / Delete"},
+  exp_cat_name: {hi:"खर्च की मद का नाम", en:"Expense Category Name"},
+  exp_cat_name_ph: {hi:"जैसे दूध, पेट्रोल, किराना", en:"e.g. Milk, Petrol, Grocery"},
+  exp_cat_hint: {hi:"यह मद खर्च दर्ज करते समय \"To\" में दिखेगी।", en:"This category will appear in \"To\" when recording expenses."},
+  add_cat_btn: {hi:"मद जोड़ें", en:"Add Category"},
+  inc_cat: {hi:"आय की मद", en:"Income Category"},
+  new_source: {hi:"नया स्रोत बनाएँ", en:"Create new source"},
+  inc_src_name: {hi:"आय के स्रोत का नाम", en:"Income Source Name"},
+  inc_src_name_ph: {hi:"जैसे बिजनेस, किराया, ब्याज", en:"e.g. Business, Rent, Interest"},
+  inc_cat_hint: {hi:"यह मद बैंक डिपॉजिट में \"From\" (CR) में दिखेगी और आय गिनी जाएगी।", en:"This category will appear in \"From\" (CR) in bank deposit and count as income."},
+  no_exp_cat: {hi:"अभी कोई खर्च की मद नहीं जोड़ी गई।", en:"No expense category added yet."},
+  no_inc_cat: {hi:"अभी कोई आय की मद नहीं जोड़ी गई।", en:"No income category added yet."},
+  rename: {hi:"नाम बदलें", en:"Rename"},
+  delete: {hi:"हटाएँ", en:"Delete"},
+  new_name: {hi:"नया नाम:", en:"New name:"},
+  name_empty: {hi:"नाम खाली नहीं हो सकता।", en:"Name cannot be empty."},
+  name_exists: {hi:"यह नाम पहले से मौजूद है।", en:"This name already exists."},
+  cat_exists: {hi:"यह मद पहले से मौजूद है।", en:"This category already exists."},
+  src_exists: {hi:"यह स्रोत पहले से मौजूद है।", en:"This source already exists."},
+  exp_cat_added: {hi:"खर्च की मद जोड़ दी गई।", en:"Expense category added."},
+  inc_cat_added: {hi:"आय की मद जोड़ दी गई।", en:"Income category added."},
+  cat_used_confirm: {hi:"इस मद का उपयोग पुराने ट्रांजेक्शन में हुआ है। हटाने पर वे पुरानी एंट्री \"अन्य\" की तरह दिखेंगी। जारी रखें?", en:"This category is used in past transactions. Old entries will show as \"Other\". Continue?"},
+  cat_delete_confirm: {hi:"इस मद को हटाएँ?", en:"Delete this category?"},
+  entry_saved: {hi:"एंट्री सेव हो गई।", en:"Entry saved."},
+  amount_gt_zero: {hi:"रकम 0 से अधिक भरें।", en:"Enter amount greater than 0."},
+  select_account: {hi:"कृपया खाता चुनें।", en:"Please select an account."},
+  card_limit_short: {hi:"क्रेडिट कार्ड लिमिट पर्याप्त नहीं है।", en:"Credit card limit insufficient."},
+  balance_short: {hi:" में पर्याप्त बैलेंस नहीं है।", en:" does not have enough balance."},
+  qty_short: {hi:" में पर्याप्त मात्रा नहीं है।", en:" does not have enough quantity."},
+  same_acc_error: {hi:"एक ही खाते को To और From में नहीं चुन सकते।", en:"Cannot select same account in To and From."},
+  sel_acc_to: {hi:"कृपया \"To\" में खाता चुनें।", en:"Please select an account in \"To\"."},
+  sel_src_from: {hi:"कृपया \"From\" में स्रोत चुनें।", en:"Please select a source in \"From\"."},
+  card_cash_dr: {hi:"क्रेडिट कार्ड से नकद निकासी के लिए DR में नकद खाता चुनें।", en:"Select Cash account in DR for card cash withdrawal."},
+  card_cash_wd: {hi:"क्रेडिट कार्ड से नकद निकासी", en:"Card Cash Withdrawal"},
+  transfer: {hi:"ट्रांसफर: ", en:"Transfer: "},
+  from_word: {hi:" से ", en:" to "},
+  salary_income: {hi:"सैलरी आय", en:"Salary Income"},
+  income_word: {hi:"आय: ", en:"Income: "},
+  cr_error: {hi:"CR में बैंक, नकद, क्रेडिट कार्ड, सैलरी या आय का स्रोत चुनें।", en:"Select bank, cash, card, salary, or income source in CR."},
+  sel_card_loan_to: {hi:"To में कार्ड या लोन चुनें।", en:"Select card or loan in To."},
+  sel_src_from_short: {hi:"From में स्रोत चुनें।", en:"Select source in From."},
+  same_acc_pay: {hi:"एक ही खाते से भुगतान नहीं हो सकता।", en:"Cannot pay from the same account."},
+  card_bill_pay: {hi:"क्रेडिट कार्ड बिल भुगतान", en:"Credit Card Bill Payment"},
+  loan_emi_short: {hi:"लोन की किस्त", en:"Loan EMI"},
+  sel_exp_to: {hi:"To में खर्च की मद चुनें।", en:"Select expense category in To."},
+  sel_pay_from: {hi:"From में भुगतान का स्रोत चुनें।", en:"Select payment source in From."},
+  sel_to_short: {hi:"To में चुनें।", en:"Select in To."},
+  sel_from_short2: {hi:"From में चुनें।", en:"Select in From."},
+  same_acc_adj: {hi:"एक ही खाते पर एडजस्ट नहीं कर सकते।", en:"Cannot adjust same account."},
+  interest_adj: {hi:"ब्याज / पेनल्टी एडजस्टमेंट", en:"Interest / Penalty Adjustment"},
+  same_acc_tr: {hi:"एक ही खाते में ट्रांसफर नहीं हो सकता।", en:"Cannot transfer to same account."},
+  family_loan_transfer: {hi:"पारिवारिक लोन ट्रांसफर", en:"Family Loan Transfer"},
+  enter_qty: {hi:"मात्रा भरें।", en:"Enter quantity."},
+  asset_bought: {hi:"संपत्ति खरीदी: ", en:"Asset Purchased: "},
+  asset_sold: {hi:"संपत्ति बेची: ", en:"Asset Sold: "},
+  sel_dr_cr: {hi:"DR और CR दोनों में खाते चुनें।", en:"Select accounts in both DR and CR."},
+  inv_deposit: {hi:"निवेश जमा: ", en:"Investment Deposit: "},
+  inv_withdraw: {hi:"निवेश निकासी: ", en:"Investment Withdrawal: "},
+  inv_error: {hi:"निवेश जमा करने के लिए DR में निवेश और CR में बैंक/नकद चुनें।", en:"To deposit in investment, select investment in DR and bank/cash in CR."},
+  edit_balance: {hi:"वर्तमान बैलेंस / बकाया राशि (₹) बदलें", en:"Edit current balance / due amount (₹)"},
+  edit_limit: {hi:"वर्तमान उपलब्ध लिमिट (₹) बदलें", en:"Edit current available limit (₹)"},
+  enter_valid_amt: {hi:"सही राशि भरें", en:"Enter a valid amount"},
+  limit_exceed: {hi:"उपलब्ध लिमिट कुल लिमिट से अधिक नहीं हो सकती", en:"Available limit cannot exceed total limit"},
+  del_closed_acc_confirm: {hi:"क्या बंद खाते को स्थायी रूप से हटाना चाहते हैं?", en:"Delete this closed account permanently?"},
+  old_txn_exist: {hi:"इस खाते के पुराने ट्रांजेक्शन मौजूद हैं।", en:"This account has past transactions."},
+  close_acc_confirm: {hi:"इस खाते से ट्रांजेक्शन जुड़े हैं। क्या खाता बंद करके सुरक्षित रखना चाहेंगे?", en:"This account has transactions. Close it safely?"},
+  del_acc_confirm: {hi:"क्या यह खाता हटाना चाहते हैं?", en:"Delete this account?"},
+  del_txn_confirm: {hi:"यह एंट्री हटाएँ? संबंधित बैलेंस वापस समायोजित होगा।", en:"Delete this entry? Balances will be adjusted."},
+  load_backup_confirm: {hi:"मौजूदा डेटा बदलकर बैकअप लोड करें?", en:"Load backup, replacing current data?"},
+  backup_loaded: {hi:"बैकअप लोड हो गया।", en:"Backup loaded."},
+  invalid_backup: {hi:"सही बैकअप फ़ाइल नहीं है।", en:"Invalid backup file."},
+  savings_target_saved: {hi:"बचत लक्ष्य सेव हो गया।", en:"Savings target saved."},
+  no_data_filter: {hi:"इस फिल्टर में कोई डेटा नहीं है।", en:"No data in this filter."},
+  popup_blocked: {hi:"पॉप-अप रोका गया। कृपया पॉप-अप की अनुमति दें।", en:"Popup blocked. Please allow popups."},
+  popup_blocked_short: {hi:"पॉप-अप रोका गया।", en:"Popup blocked."},
+  cash_acc_exists: {hi:"नकद खाता पहले से मौजूद है।", en:"Cash account already exists."},
+  total: {hi:"कुल", en:"Total"},
+  chart_income: {hi:"आय", en:"Income"},
+  chart_expense: {hi:"खर्च", en:"Expense"},
+  chart_networth: {hi:"नेटवर्थ", en:"Net Worth"},
+  no_expense_period: {hi:"इस अवधि में खर्च दर्ज नहीं है", en:"No expense recorded in this period"},
+  no_expense_month: {hi:"इस माह कोई खर्च नहीं।", en:"No expense this month."},
+  other_cat: {hi:"अन्य", en:"Other"},
+  account_removed: {hi:"खाता हटाया गया", en:"Account removed"},
+  statement_title: {hi:"MD Account & Budget - स्टेटमेंट", en:"MD Account & Budget - Statement"},
+  generated_by: {hi:"Generated by MD Account & Budget App", en:"Generated by MD Account & Budget App"},
+  type_bank_inc: {hi:"बैंक जमा/निकासी", en:"Bank Deposit/Withdrawal"},
+  type_expense: {hi:"खर्च", en:"Expense"},
+  type_card_loan: {hi:"कार्ड / लोन भुगतान", en:"Card/Loan Payment"},
+  type_family: {hi:"पारिवारिक लोन", en:"Family Loan"},
+  type_investment: {hi:"निवेश", en:"Investment"},
+  type_asset: {hi:"संपत्ति", en:"Asset"},
+  type_interest: {hi:"ब्याज / पेनल्टी", en:"Interest/Penalty"},
+  type_transfer: {hi:"ट्रांसफर", en:"Transfer"},
+  int_penalty_opt: {hi:"ब्याज (पेनल्टी)", en:"Interest (Penalty)"},
+  int_reward_opt: {hi:"ब्याज (रिवॉर्ड)", en:"Interest (Reward)"},
+  adj_penalty_desc: {hi:"ब्याज (पेनल्टी): ", en:"Interest (Penalty): "},
+  adj_reward_desc: {hi:"ब्याज (रिवॉर्ड): ", en:"Interest (Reward): "}
+};
+function t(k){const e=dict[k];return e?(e[currentLang]||e.hi||k):k;}
+
+let currentLang = 'hi';
+
+function applyLanguage() {
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(dict[key]) el.textContent = t(key);
+  });
+  const btn=document.getElementById('languageToggle');
+  if(btn) btn.textContent = currentLang==='hi' ? 'English' : 'हिंदी';
+  const p=activeProfile();
+  const userName=p?p.name:t('app_title');
+  const topbar=document.getElementById('topbarTitle');
+  if(topbar) topbar.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${t('app_title')}` + (p?' · '+userName:'');
+  const drawerTitle=document.getElementById('drawerUserName');
+  if(drawerTitle) drawerTitle.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${userName}`;
+  document.documentElement.lang=currentLang;
+  const pfName=$('pfName');if(pfName)pfName.placeholder=t('name_ph');
+  const pfMobile=$('pfMobile');if(pfMobile)pfMobile.placeholder=t('mobile_ph');
+  const tNote=$('tNote');if(tNote)tNote.placeholder=t('note_ph');
+  const passSearch=$('passSearch');if(passSearch)passSearch.placeholder=t('search_ph');
+  const expAddName=$('expAddName');if(expAddName)expAddName.placeholder=t('exp_cat_name_ph');
+  const incAddName=$('incAddName');if(incAddName)incAddName.placeholder=t('inc_src_name_ph');
+  const mit=$('monthlyIncomeTarget');if(mit)mit.placeholder=t('est_income_ph');
+  const sct=$('smartCalTitle');if(sct&&!smartCalStart)sct.textContent=calTitleText();
+  setAccountFields();
+  try{ renderAll(); }catch(e){}
+  try{ renderSmartCalendar(); renderSmartTransactions(); }catch(e){}
+}
+function calTitleText(){return smartCalCursor.toLocaleDateString(currentLang==='hi'?'hi-IN':'en-IN',{month:'long',year:'numeric'});}
+function toggleLanguage(){currentLang=currentLang==='hi'?'en':'hi';applyLanguage();}
+
+/* ============================================================
+   APP DATA
+   ============================================================ */
+const KEY='meraHisab_v1';
+const PROFILE_KEY='meraHisab_profile_v2';
+let db=load();
+
+function load(){
+  try{
+    let d=JSON.parse(localStorage.getItem(KEY));
+    if(!d||!Array.isArray(d.accounts)||!Array.isArray(d.txns))return {accounts:[],txns:[],monthlyIncomeTarget:0,monthDays:30};
+    d.monthlyIncomeTarget=Number(d.monthlyIncomeTarget)||0;
+    d.monthDays=Number(d.monthDays)||30;
+    d.accounts=d.accounts.map(a=>({rate:0,limit:0,available:0,emi:0,weight:0,...a}));
+    d.txns=d.txns.map(t=>({...t,changes:Array.isArray(t.changes)?t.changes:[]}));
+    return d;
+  }catch(e){return {accounts:[],txns:[],monthlyIncomeTarget:0,monthDays:30}}
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));try{renderAll()}catch(err){console.error('render error:',err)}}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function money(n){let v=new Intl.NumberFormat('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);return '₹'+v}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function acct(i){return db.accounts.find(a=>a.id===i)}
+function accounts(type){return db.accounts.filter(a=>!a.closed&&(!type||a.type===type))}
+function allAccounts(type){return db.accounts.filter(a=>!type||a.type===type)}
+function label(a){return a?a.name+(a.last?' ••'+a.last:''):t('account_removed')}
+function today(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const $=i=>document.getElementById(i);
+$('tDate').value=today();
+
+function fillSelect(el,arr,first){
+  if(!el)return;
+  let oldVal=el.value;
+  el.innerHTML=(first?`<option value="">${esc(first)}</option>`:'')+arr.map(a=>`<option value="${a.id}">${esc(label(a))}</option>`).join('');
+  if(oldVal&&arr.some(a=>a.id===oldVal))el.value=oldVal;
+}
+
+function setAccountFields(){
+  let ty=$('aType').value;
+  const show=(x,on)=>{const el=$(x);if(!el)return;el.classList.toggle('hidden',!on);el.style.display=on?'flex':'none';};
+  show('aNameWrap',ty!=='cash');
+  show('aBalanceWrap',['bank','cash','loan','familygiven','familytaken','investment','gold','silver','land'].includes(ty));
+  show('aWeightWrap',['gold','silver','land'].includes(ty));
+  show('aLimitWrap',ty==='card');
+  show('aAvailWrap',ty==='card');
+  show('aEmiWrap',ty==='loan');
+  $('aName').required=ty!=='cash';
+  const nameLabelHi=['loan','familygiven','familytaken'].includes(ty)?'बैंक / व्यक्ति / लोन का नाम':ty==='card'?'बैंक / कार्ड का नाम':['gold','silver','land'].includes(ty)?'संपत्ति का नाम':ty==='investment'?'निवेश का नाम (जैसे PPF, FD, RD, NPS)':ty==='cash'?'नकद':'बैंक / खाते का नाम';
+  const nameLabelEn=['loan','familygiven','familytaken'].includes(ty)?'Bank / Person / Loan Name':ty==='card'?'Bank / Card Name':['gold','silver','land'].includes(ty)?'Asset Name':ty==='investment'?'Investment Name (e.g. PPF, FD, RD, NPS)':ty==='cash'?'Cash':'Bank / Account Name';
+  $('aNameLabel').textContent=currentLang==='hi'?nameLabelHi:nameLabelEn;
+  const balLabelHi=['loan','familytaken'].includes(ty)?'वर्तमान उधार बकाया राशि (₹)':ty==='familygiven'?'वापस मिलने वाली राशि (₹)':ty==='cash'?'उपलब्ध नकद (₹)':['gold','silver','land'].includes(ty)?'कुल खरीद मूल्य (₹)':'वर्तमान बैलेंस (₹)';
+  const balLabelEn=['loan','familytaken'].includes(ty)?'Current Outstanding Loan Amount (₹)':ty==='familygiven'?'Amount to be Recovered (₹)':ty==='cash'?'Available Cash (₹)':['gold','silver','land'].includes(ty)?'Total Purchase Value (₹)':'Current Balance (₹)';
+  $('aBalanceLabel').textContent=currentLang==='hi'?balLabelHi:balLabelEn;
+  if(ty==='cash')$('aName').value=currentLang==='hi'?'नकद':'Cash';
+  const ph={
+    bank: currentLang==='hi'?'जैसे SBI सैलरी खाता':'e.g. SBI Salary Account',
+    card: currentLang==='hi'?'जैसे HDFC क्रेडिट कार्ड':'e.g. HDFC Credit Card',
+    loan: currentLang==='hi'?'जैसे होम लोन, कार लोन':'e.g. Home Loan, Car Loan',
+    familygiven: currentLang==='hi'?'जैसे मामी, रिश्तेदार, मित्र का नाम':'e.g. Aunt, Relative, Friend Name',
+    familytaken: currentLang==='hi'?'जैसे मामी, रिश्तेदार, मित्र का नाम':'e.g. Aunt, Relative, Friend Name',
+    investment: currentLang==='hi'?'जैसे PPF, SBI FD, RD':'e.g. PPF, SBI FD, RD',
+    gold: currentLang==='hi'?'जैसे गोल्ड कॉइन, गोल्ड ज्वेलरी':'e.g. Gold Coin, Gold Jewellery',
+    silver: currentLang==='hi'?'जैसे सिल्वर कॉइन, सिल्वर ज्वेलरी':'e.g. Silver Coin, Silver Jewellery',
+    land: currentLang==='hi'?'जैसे प्लॉट, खेत, मकान':'e.g. Plot, Farm, House'
+  };
+  $('aName').placeholder=ph[ty]||(currentLang==='hi'?'नाम लिखें':'Enter Name');
+}
+$('aType').addEventListener('change',setAccountFields);
+
+$('accountForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  let ty=$('aType').value;
+  if(ty==='cash'&&accounts('cash').length){alert(t('cash_acc_exists'));return}
+  let a={id:id(),type:ty,name:ty==='cash'?(currentLang==='hi'?'नकद':'Cash'):$('aName').value.trim(),balance:Number($('aBalance').value)||0,weight:Number($('aWeight').value)||0,limit:Number($('aLimit').value)||0,available:Number($('aAvail').value)||0,emi:Number($('aEmi').value)||0};
+  if(ty==='card'&&a.available>a.limit){alert(t('limit_exceed'));return}
+  db.accounts.push(a);
+  e.target.reset();$('aType').value='bank';setAccountFields();save();
+});
+
+function setTxnFields(){
+  let ty=$('tType').value;
+  const show=(x,on)=>{const el=$(x);if(!el)return;el.classList.toggle('hidden',!on);el.style.display=on?'flex':'none';};
+  ['tToWrap','tFromWrap','tAssetWeightWrap','tCashFeeWrap'].forEach(x=>show(x,false));
+  if(ty==='bankdeposit'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_deposit');
+    $('tFromLabel').textContent=t('cr_source');
+    fillSelect($('tToAccount'),accounts('bank').concat(accounts('cash')),t('deposit_into'));
+    let fa=accounts('bank').concat(accounts('cash'),accounts('card'));
+    fa.push({id:'source_salary',name:t('salary')});
+    accounts('incomesource').forEach(s=>fa.push({id:s.id,name:t('income_prefix')+s.name}));
+    fillSelect($('tFromAccount'),fa,t('money_from'));
+    $('entryHint').textContent=t('hint_bankdep');
+  }else if(ty==='pay'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_card_loan');
+    $('tFromLabel').textContent=t('cr_pay_from');
+    fillSelect($('tToAccount'),accounts('card').concat(accounts('loan'),accounts('familygiven'),accounts('familytaken')),t('sel_card_loan'));
+    fillSelect($('tFromAccount'),accounts('bank').concat(accounts('cash')),t('sel_bank_cash'));
+    $('entryHint').textContent=t('hint_pay');
+  }else if(ty==='expense'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_exp_cat');
+    $('tFromLabel').textContent=t('cr_pay_mode');
+    fillSelect($('tToAccount'),accounts('category'),t('sel_exp_cat'));
+    fillSelect($('tFromAccount'),accounts('bank').concat(accounts('card'),accounts('cash')),t('sel_bank_card_cash'));
+    $('entryHint').textContent=t('hint_expense');
+  }else if(ty==='adjust'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_interest');
+    $('tFromLabel').textContent=t('cr_interest');
+    let permanentOpts=[
+      {id:'source_int_penalty',name:t('int_penalty_opt')},
+      {id:'source_int_reward',name:t('int_reward_opt')}
+    ];
+    let all=permanentOpts.concat(
+      accounts('bank'),accounts('cash'),accounts('card'),
+      accounts('loan'),accounts('familytaken'),accounts('familygiven'),accounts('investment')
+    );
+    fillSelect($('tToAccount'),all,t('sel_dr'));
+    fillSelect($('tFromAccount'),all,t('sel_cr'));
+    $('entryHint').textContent=t('hint_adjust');
+  }else if(ty==='familypay'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_family');
+    $('tFromLabel').textContent=t('cr_family');
+    let fams=accounts('familygiven').concat(accounts('familytaken'));
+    let src=accounts('bank').concat(accounts('cash'));
+    fillSelect($('tToAccount'),fams.concat(src),t('sel_to'));
+    fillSelect($('tFromAccount'),fams.concat(src),t('sel_from'));
+    $('entryHint').textContent=t('hint_family');
+  }else if(ty==='asset'){
+    show('tToWrap',true);show('tFromWrap',true);show('tAssetWeightWrap',true);
+    $('tToLabel').textContent=t('dr_asset');
+    $('tFromLabel').textContent=t('cr_asset');
+    let assets=accounts('gold').concat(accounts('silver'),accounts('land'));
+    let m=accounts('bank').concat(accounts('cash'));
+    fillSelect($('tToAccount'),assets.concat(m),t('sel_to'));
+    fillSelect($('tFromAccount'),m.concat(assets),t('sel_from'));
+    $('entryHint').textContent=t('hint_asset');
+  }else if(ty==='investment'){
+    show('tToWrap',true);show('tFromWrap',true);
+    $('tToLabel').textContent=t('dr_invest');
+    $('tFromLabel').textContent=t('cr_invest');
+    const inv=accounts('investment');
+    const m=accounts('bank').concat(accounts('cash'));
+    fillSelect($('tToAccount'),inv.concat(m),t('sel_inv_bank_cash'));
+    fillSelect($('tFromAccount'),m.concat(inv),t('sel_bank_cash_inv'));
+    $('entryHint').textContent=t('hint_invest');
+  }
+}
+$('tType').addEventListener('change',setTxnFields);
+
+$('txnForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  let type=$('tType').value,amt=Number($('tAmount').value),date=$('tDate').value;
+  if(!(amt>0)){alert(t('amount_gt_zero'));return}
+  let changes=[],desc='',categoryId=null,accountId=null;
+  function change(a,field,delta){
+    if(!a)throw Error(t('select_account'));
+    let old=a[field];
+    if(field==='available'&&old+delta<-.001)throw Error(t('card_limit_short'));
+    if(field==='balance'&&old+delta<-.001)throw Error(label(a)+t('balance_short'));
+    if(field==='weight'&&old+delta<-.001)throw Error(label(a)+t('qty_short'));
+    a[field]=Math.max(0,old+delta);
+    changes.push({id:a.id,field,delta});
+  }
+  try{
+    let toVal=$('tToAccount').value,fromVal=$('tFromAccount').value;
+    let toA=toVal.startsWith('source_')?null:acct(toVal);
+    let fromA=fromVal.startsWith('source_')?null:acct(fromVal);
+    let sourceType=fromVal.startsWith('source_')?fromVal:null;
+    let isIncome=false;
+    if(toVal&&fromVal&&toVal===fromVal&&!toVal.startsWith('source_'))throw Error(t('same_acc_error'));
+    if(type==='bankdeposit'){
+      if(!toA)throw Error(t('sel_acc_to'));
+      if(!fromVal)throw Error(t('sel_src_from'));
+      if(fromA&&fromA.type==='card'){
+        if(toA.type!=='cash')throw Error(t('card_cash_dr'));
+        change(fromA,'available',-amt);change(toA,'balance',amt);
+        desc=t('card_cash_wd');accountId=fromA.id;
+      }else{
+        change(toA,'balance',amt);accountId=toA.id;
+        if(fromA&&fromA.type!=='incomesource'){change(fromA,'balance',-amt);desc=t('transfer')+label(fromA)+t('from_word')+label(toA);}
+        else if(sourceType==='source_salary'){isIncome=true;desc=t('salary_income');}
+        else if(fromA&&fromA.type==='incomesource'){isIncome=true;desc=t('income_word')+fromA.name;categoryId=fromA.id;}
+        else{throw Error(t('cr_error'));}
+      }
+    }else if(type==='pay'){
+      if(!toA)throw Error(t('sel_card_loan_to'));
+      if(!fromA)throw Error(t('sel_src_from_short'));
+      if(toA.id===fromA.id)throw Error(t('same_acc_pay'));
+      if(toA.type==='card'){change(toA,'available',amt);desc=t('card_bill_pay');}
+      else{change(toA,'balance',-amt);desc=t('loan_emi_short');}
+      change(fromA,'balance',-amt);accountId=toA.id;
+    }else if(type==='expense'){
+      if(!toA)throw Error(t('sel_exp_to'));
+      if(!fromA)throw Error(t('sel_pay_from'));
+      categoryId=toA.id;desc=toA.name;
+      if(fromA.type==='card'){change(fromA,'available',-amt);}else{change(fromA,'balance',-amt);}
+      accountId=fromA.id;
+    }else if(type==='adjust'){
+      if(!toVal)throw Error(t('sel_to_short'));
+      if(!fromVal)throw Error(t('sel_from_short2'));
+      if(toVal===fromVal)throw Error(t('same_acc_adj'));
+
+      let hasPenalty = (toVal==='source_int_penalty' || fromVal==='source_int_penalty');
+      let hasReward  = (toVal==='source_int_reward'  || fromVal==='source_int_reward');
+
+      function applySmartAdjust(acc, side){
+        if(!acc) return;
+        let isDebt = ['loan','familytaken'].includes(acc.type);
+        if(acc.type==='card'){
+          if(hasPenalty) change(acc,'available',-amt);
+          else if(hasReward) change(acc,'available',amt);
+          else change(acc,'available', side==='to' ? amt : -amt);
+        }else if(isDebt){
+          if(hasPenalty) change(acc,'balance',amt);
+          else if(hasReward) change(acc,'balance',-amt);
+          else change(acc,'balance', side==='to' ? amt : -amt);
+        }else{
+          if(hasPenalty) change(acc,'balance',-amt);
+          else if(hasReward) change(acc,'balance',amt);
+          else change(acc,'balance', side==='to' ? amt : -amt);
+        }
+      }
+
+      if(toA) applySmartAdjust(toA, 'to');
+      if(fromA) applySmartAdjust(fromA, 'from');
+
+      let targetAcc = toA || fromA;
+      accountId = targetAcc ? targetAcc.id : null;
+
+      if(hasReward){
+        isIncome = (targetAcc && ['bank','cash','investment'].includes(targetAcc.type)) ? true : false;
+        desc = t('adj_reward_desc') + (targetAcc ? label(targetAcc) : '');
+      }else if(hasPenalty){
+        desc = t('adj_penalty_desc') + (targetAcc ? label(targetAcc) : '');
+      }else{
+        desc = t('interest_adj');
+      }
+    }else if(type==='familypay'){
+      if(!toA)throw Error(t('sel_to_short'));
+      if(!fromA)throw Error(t('sel_from_short2'));
+      if(toA.id===fromA.id)throw Error(t('same_acc_tr'));
+      if(toA.type==='familygiven'||toA.type==='familytaken'){change(toA,'balance',-amt);}else{change(toA,'balance',amt);}
+      change(fromA,'balance',-amt);
+      desc=t('family_loan_transfer');accountId=toA.id;
+    }else if(type==='asset'){
+      if(!toA)throw Error(t('sel_to_short'));
+      if(!fromA)throw Error(t('sel_from_short2'));
+      let w=Number($('tAssetWeight').value)||0;
+      if(w<=0)throw Error(t('enter_qty'));
+      if(toA.type==='gold'||toA.type==='silver'||toA.type==='land'){
+        change(toA,'weight',w);change(toA,'balance',amt);change(fromA,'balance',-amt);
+        desc=t('asset_bought')+toA.name;
+      }else{
+        change(fromA,'weight',-w);change(fromA,'balance',-amt);change(toA,'balance',amt);
+        desc=t('asset_sold')+fromA.name;
+      }
+      accountId=toA.id;
+    }else if(type==='investment'){
+      if(!toA||!fromA)throw Error(t('sel_dr_cr'));
+      const invTypes=['investment'];
+      const moneyTypes=['bank','cash'];
+      if(invTypes.includes(toA.type)&&moneyTypes.includes(fromA.type)){
+        change(toA,'balance',amt);change(fromA,'balance',-amt);desc=t('inv_deposit')+toA.name;accountId=toA.id;
+      }else if(moneyTypes.includes(toA.type)&&invTypes.includes(fromA.type)){
+        change(fromA,'balance',-amt);change(toA,'balance',amt);desc=t('inv_withdraw')+fromA.name;accountId=toA.id;
+      }else{throw Error(t('inv_error'));}
+    }
+    db.txns.push({id:id(),type,amount:amt,date,desc,note:$('tNote').value.trim(),accountId,categoryId,isIncome,changes});
+    e.target.reset();$('tDate').value=today();setTxnFields();save();
+    alert(t('entry_saved'));
+  }catch(err){
+    changes.reverse().forEach(c=>{let a=acct(c.id);if(a)a[c.field]-=c.delta;});
+    alert(err.message);
+  }
+});
+
+function networth(){
+  let pos=accounts('bank').concat(accounts('investment'),accounts('gold'),accounts('silver'),accounts('land'),accounts('familygiven')).reduce((s,a)=>s+Number(a.balance||0),0)+accounts('cash').reduce((s,a)=>s+Number(a.balance||0),0);
+  let neg=accounts('card').reduce((s,a)=>s+(a.limit-a.available),0)+accounts('loan').concat(accounts('familytaken')).reduce((s,a)=>s+Number(a.balance||0),0);
+  return pos-neg;
+}
+function totalCashBank(){return accounts('bank').reduce((s,a)=>s+a.balance,0)+accounts('cash').reduce((s,a)=>s+a.balance,0)}
+function totalCardDebt(){return accounts('card').reduce((s,a)=>s+a.limit-a.available,0)}
+function monthKey(d){return d.slice(0,7)}
+function monthLabel(k){return new Date(k+'-01T12:00:00').toLocaleDateString(currentLang==='hi'?'hi-IN':'en-IN',{month:'short',year:'2-digit'})}
+function lastMonths(){let a=[],d=new Date();d.setDate(1);for(let i=5;i>=0;i--){let x=new Date(d.getFullYear(),d.getMonth()-i,1);a.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'))}return a}
+function monthIncome(m){return db.txns.filter(x=>monthKey(x.date)===m&&x.isIncome).reduce((s,x)=>s+x.amount,0)}
+function monthExpenses(m){return db.txns.filter(x=>monthKey(x.date)===m&&x.type==='expense').reduce((s,x)=>s+x.amount,0)}
+
+function renderHome(){
+  let m=[
+    [t('bank_cash'),totalCashBank(),t('bank_cash_desc')],
+    [t('fam_given_short'),accounts('familygiven').reduce((s,a)=>s+a.balance,0),t('fam_given_desc')],
+    [t('card_due'),totalCardDebt(),t('card_due_desc')],
+    [t('loan_due'),accounts('loan').concat(accounts('familytaken')).reduce((s,a)=>s+a.balance,0),t('loan_due_desc')]
+  ];
+  $('homeMetrics').innerHTML=m.map((x,i)=>`<button type="button" class="card metric" onclick="showMetricDetail(${i})"><small>${x[0]}</small><strong>${money(x[1])}</strong><div class="sub">${x[2]}</div><div class="tap-hint">${t('tap_details')}</div></button>`).join('');
+  let netHtml=`<button type="button" class="card metric tone-net big-net-card" onclick="showMetricDetail(4)" style="width:100%;display:block;padding:20px;text-align:left;">
+    <div class="row"><small style="font-size:14px;font-weight:800;color:#3730a3;">${t('net_worth')}</small><span style="font-size:28px;">💎</span></div>
+    <strong class="${networth()<0?'negative':''}" style="font-size:32px;margin-top:15px;display:block;color:#5b21b6;">${money(networth())}</strong>
+    <div class="sub" style="font-size:13px;color:#687b76;margin-bottom:15px;">${t('net_worth_desc')}</div>
+    <div class="chartwrap" style="margin-top:12px;background:#fff;border-radius:12px;padding:10px;width:100%;height:260px;"><canvas id="homeMiniChart" style="width:100%;height:100%;display:block;"></canvas></div>
+    <div class="tap-hint" style="text-align:center;margin-top:15px;font-size:12px;font-weight:700;color:#5b21b6;">${t('tap_full_details')}</div>
+  </button>`;
+  $('homeNetWorth').innerHTML=netHtml;
+  [...document.querySelectorAll('#homeMetrics .metric')].forEach(c=>{
+    c.classList.remove('tone-income','tone-family','tone-card','tone-loan');
+    const tx=(c.innerText||'').toLowerCase();
+    if(tx.includes('लोन')||tx.includes('loan'))c.classList.add('tone-loan');
+    else if(tx.includes('क्रेडिट')||tx.includes('card'))c.classList.add('tone-card');
+    else if(tx.includes('पारिवारिक')||tx.includes('family'))c.classList.add('tone-family');
+    else c.classList.add('tone-income');
+  });
+  requestAnimationFrame(()=>{
+    let months=lastMonths();
+    drawLineChart($('homeMiniChart'),months.map(monthLabel),[
+      {name:t('chart_income'),values:months.map(monthIncome)},
+      {name:t('chart_expense'),values:months.map(monthExpenses)},
+      {name:t('chart_networth'),values:months.map(networthAtMonthEnd)}
+    ]);
+  });
+}
+
+let metricDetailReturn=0;
+function showMetricDetail(which){
+  metricDetailReturn=which;let box=$('metricDetail');
+  let cards=accounts('card'),loans=accounts('loan').concat(accounts('familytaken'));
+  let rows=[],title='';
+  const line=(name,amount,extra='',id0='')=>`<div class="item row account-row" ${id0?`onclick="showAccountTxns('${id0}')"`:''}><div><strong>${esc(name)}</strong>${extra?`<div class="muted">${esc(extra)}</div>`:''}</div><strong>${money(amount)}</strong></div>`;
+  if(which===0){
+    title=t('bank_cash_details');
+    rows.push(`<div class="mini-tabs"><button type="button" class="active" onclick="cashBankDetail('bank',this)">🏦 ${t('bank_accounts')}</button><button type="button" onclick="cashBankDetail('cash',this)">💵 ${t('cash_accounts')}</button></div><div id="cashBankAccountList"></div>`);
+    rows.push(`<div class="item row"><strong>${t('total_available')}</strong><strong>${money(totalCashBank())}</strong></div>`);
+  }else if(which===1){
+    title=t('fam_given');
+    rows=accounts('familygiven').map(a=>line(label(a),a.balance,t('fam_given_desc'),a.id));
+    if(!rows.length)rows.push(`<div class="empty">${t('no_fam_loan')}</div>`);
+    rows.push(`<div class="item row"><strong>${t('total_recoverable')}</strong><strong>${money(accounts('familygiven').reduce((s,a)=>s+a.balance,0))}</strong></div>`);
+  }else if(which===2){
+    title=t('card_details');
+    if(cards.length){
+      rows.push('<div class="cardbrand-grid">'+cards.map(a=>`<button type="button" class="cardbrand-tile" onclick="showAccountTxns('${a.id}')"><span class="cardbrand-logo">${esc((a.name||'CARD').trim().slice(0,3).toUpperCase())}</span><strong>${esc(label(a))}</strong><span class="cardbrand-caption">💳 ${t('credit_card')}</span><span class="cardbrand-amount">${t('due')} ${money(a.limit-a.available)}</span></button>`).join('')+'</div>');
+    }else rows.push(`<div class="empty">${t('no_card')}</div>`);
+    rows.push(`<div class="item row"><strong>${t('total_card_due')}</strong><strong>${money(totalCardDebt())}</strong></div>`);
+  }else if(which===3){
+    title=t('loan_details');
+    rows.push(`<div class="cardbrand-grid loan-kind-grid"><button type="button" class="cardbrand-tile" onclick="loanDetail('bank',this)"><span class="cardbrand-logo">🏦</span><strong>${t('bank_loan')}</strong></button><button type="button" class="cardbrand-tile" onclick="loanDetail('family',this)"><span class="cardbrand-logo">👤</span><strong>${t('family_loan')}</strong></button></div><div id="loanDetailList"></div><div class="item row"><strong>${t('total_loan')}</strong><strong>${money(loans.reduce((s,a)=>s+a.balance,0))}</strong></div>`);
+  }else{
+    title=t('networth_details');
+    rows=[
+      line(t('bank_cash'),totalCashBank()),
+      line(t('given_to_family'),accounts('familygiven').reduce((s,a)=>s+a.balance,0)),
+      line(t('gold'),accounts('gold').reduce((s,a)=>s+a.balance,0)),
+      line(t('silver'),accounts('silver').reduce((s,a)=>s+a.balance,0)),
+      line(t('land'),accounts('land').reduce((s,a)=>s+a.balance,0)),
+      line(t('card_due'),-totalCardDebt()),
+      line(t('loan_due'),-loans.reduce((s,a)=>s+a.balance,0)),
+      `<div class="item row"><strong>${t('networth')}</strong><strong class="${networth()<0?'negative':'positive'}">${money(networth())}</strong></div>`
+    ];
+  }
+  box.innerHTML=`<div class="row"><button class="btn secondary small" type="button" onclick="closeMetricDetail()">‹ ${t('dashboard')}</button></div><h2 class="section-title">${title}</h2>${rows.join('')}`;
+  $('homeDashboardContent').classList.add('hidden');box.classList.remove('hidden');
+  if(which===0)cashBankDetail('bank',box.querySelector('.mini-tabs button'));
+  if(which===3)loanDetail('bank',box.querySelector('.loan-kind-grid button'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function loanDetail(kind,btn){
+  let target=$('loanDetailList');if(!target)return;
+  document.querySelectorAll('#metricDetail .loan-kind-grid button').forEach(b=>b.classList.toggle('active',b===btn));
+  let arr=(kind==='bank'?accounts('loan'):accounts('familytaken'));
+  target.innerHTML=arr.map(a=>`<button type="button" class="account-detail-tile" onclick="showAccountTxns('${a.id}')"><span class="account-detail-icon">${kind==='bank'?'🏦':'👤'}</span><span class="account-detail-name"><strong>${esc(label(a))}</strong><small>${kind==='bank'?t('bank_loan'):t('family_loan')}</small></span><strong>${money(a.balance)}</strong></button>`).join('')||`<div class="empty">${t('nothing')}</div>`;
+}
+function cashBankDetail(kind,btn){
+  let target=$('cashBankAccountList');if(!target)return;
+  let arr=accounts(kind);
+  document.querySelectorAll('#metricDetail .mini-tabs button').forEach(b=>b.classList.toggle('active',b===btn));
+  target.innerHTML=arr.map(a=>`<button type="button" class="account-detail-tile" onclick="showAccountTxns('${a.id}')"><span class="account-detail-icon">${kind==='bank'?'🏦':'💵'}</span><span class="account-detail-name"><strong>${esc(label(a))}</strong><small>${kind==='bank'?t('bank_accounts'):t('cash_accounts')}</small></span><strong>${money(a.balance)}</strong></button>`).join('')||`<div class="empty">${t('nothing')}</div>`;
+}
+function closeMetricDetail(){$('metricDetail').classList.add('hidden');$('homeDashboardContent').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function showAccountTxns(id0){
+  let a=acct(id0),box=$('metricDetail');if(!a)return;
+  let tx=db.txns.filter(x=>x.accountId===id0||(x.changes||[]).some(c=>c.id===id0)).sort((x,y)=>y.date.localeCompare(x.date));
+  box.innerHTML=`<div class="row"><button class="btn secondary small" type="button" onclick="showMetricDetail(${metricDetailReturn})">‹ ${t('back')}</button></div><h2 class="section-title">${esc(label(a))} · ${t('transactions')}</h2>`+(tx.map(txnHTML).join('')||`<div class="empty">${t('no_entries')}</div>`);
+  $('homeDashboardContent').classList.add('hidden');box.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderAccounts(){
+  const row=a=>{
+    let typeLabel = a.type==='bank'?t('bank_salary'):a.type==='card'?t('credit_card'):a.type==='loan'?t('bank_loan'):a.type==='familygiven'?t('fam_loan_given'):a.type==='familytaken'?t('fam_loan_taken'):a.type==='investment'?t('deposit_acc'):a.type==='cash'?t('cash'):a.type==='gold'?t('gold'):a.type==='silver'?t('silver'):a.type==='land'?t('land'):t('other');
+    return `<div class="item"><div class="row"><div><strong>${esc(label(a))}${a.closed?`<span class="closed-label">${t('closed')}</span>`:''}</strong><div class="muted">${esc(typeLabel)}</div></div><strong>${money(a.type==='card'?a.limit-a.available:a.balance)}${['gold','silver','land'].includes(a.type)?' <small>('+a.weight+'g)</small>':''}</strong></div><div class="actions" style="margin-top:8px">${a.closed?`<button class="btn secondary small" onclick="reopenAccount('${a.id}')">${t('reactivate')}</button><button class="btn danger small" onclick="deleteAccount('${a.id}')">${t('delete_permanently')}</button>`:`<button class="btn secondary small" onclick="editAccount('${a.id}')">${t('edit')}</button><button class="btn danger small" onclick="deleteAccount('${a.id}')">${t('close_delete')}</button>`}</div></div>`;
+  };
+  let realAccounts=db.accounts.filter(a=>a.type!=='category'&&a.type!=='incomesource');
+  let active=realAccounts.filter(a=>!a.closed);
+  $('accountList').innerHTML=active.length?active.map(row).join(''):`<div class="empty">${t('no_active_acc')}</div>`;
+  let closed=realAccounts.filter(a=>a.closed);
+  $('closedAccountList').innerHTML=closed.length?closed.map(row).join(''):`<div class="empty">${t('no_closed_acc')}</div>`;
+}
+function reopenAccount(i){let a=acct(i);if(a&&confirm(t('reactivate_confirm'))){a.closed=false;delete a.closedAt;save()}}
+
+function txnHTML(x){
+  let isInc=x.isIncome===true,isExp=(x.type==='expense');
+  let sign=isInc?'+':isExp?'−':'';
+  let cl=isInc?'positive':isExp?'negative':'';
+  let a=acct(x.accountId),cat=acct(x.categoryId);
+  let typeLabel=x.type==='bankdeposit'?t('type_bank_inc'):x.type==='expense'?t('type_expense'):x.type==='pay'?t('type_card_loan'):x.type==='familypay'?t('type_family'):x.type==='investment'?t('type_investment'):x.type==='asset'?t('type_asset'):x.type==='adjust'?t('type_interest'):t('type_transfer');
+  return `<div class="item"><div class="row"><div><strong>${esc(x.desc)}</strong><div class="muted">${esc(x.date)}${x.note?' · '+esc(x.note):''}</div><span class="pill">${typeLabel}${cat?' · '+esc(cat.name):''}${a?' · '+esc(label(a)):''}</span></div><div class="amount ${cl}">${sign}${money(x.amount)}</div></div></div>`;
+}
+
+let passMode='all';
+function renderHistory(){
+  fillSelect($('fCategory'),accounts('category'),t('all_cat_short'));
+  fillSelect($('fAccount'),db.accounts.filter(a=>['bank','card','loan','cash','familygiven','familytaken','investment','gold','silver','land'].includes(a.type)),t('all_acc_short'));
+  let months=lastMonths();
+  $('fMonth').innerHTML=`<option value="">${t('all_6m')}</option>`+months.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');
+  let tx=db.txns.filter(x=>months.includes(monthKey(x.date)));
+  const q=($('passSearch')?.value||'').trim().toLowerCase();
+  if(q)tx=tx.filter(x=>(x.desc||'').toLowerCase().includes(q)||(x.note||'').toLowerCase().includes(q));
+  if($('fCategory').value)tx=tx.filter(x=>x.categoryId===$('fCategory').value);
+  if($('fAccount').value)tx=tx.filter(x=>x.accountId===$('fAccount').value||x.changes?.some(c=>c.id===$('fAccount').value));
+  if($('fMonth').value)tx=tx.filter(x=>monthKey(x.date)===$('fMonth').value);
+  if($('fType').value)tx=tx.filter(x=>x.type===$('fType').value);
+  let from=$('passFrom')?.value||'',to=$('passTo')?.value||'';
+  if(from)tx=tx.filter(x=>x.date>=from);
+  if(to)tx=tx.filter(x=>x.date<=to);
+  if(passMode!=='all')tx=tx.filter(x=>{
+    let match=a=>a&&(passMode==='bank'?a.type==='bank':passMode==='card'?a.type==='card':passMode==='cash'?a.type==='cash':['loan','familygiven','familytaken'].includes(a.type));
+    return match(acct(x.accountId))||(x.changes||[]).some(c=>match(acct(c.id)));
+  });
+  tx.sort((a,b)=>b.date.localeCompare(a.date));
+  const expTx=tx.filter(x=>x.type==='expense');
+  const expTotal=expTx.reduce((s,x)=>s+(Number(x.amount)||0),0);
+  $('historyTotal').textContent=tx.length+' '+t('entries');
+  const summary=`<div class="item"><div class="row"><div><strong>${t('total_expense')}</strong><div class="muted">${expTx.length} ${t('expense_entries')}</div></div><strong class="negative">${money(expTotal)}</strong></div></div>`;
+  $('historyList').innerHTML=summary+(tx.map(txnHTML).join('')||`<div class="empty">${t('no_entries_found')}</div>`);
+}
+['fCategory','fAccount','fMonth','fType','passFrom','passTo','passSearch'].forEach(x=>$(x)?.addEventListener('input',renderHistory));
+function clearFilters(){$('fCategory').value='';$('fAccount').value='';$('fMonth').value='';$('fType').value='';$('passFrom').value='';$('passTo').value='';$('passSearch').value='';passMode='all';document.querySelectorAll('#passView .mini-tabs button').forEach((b,i)=>b.classList.toggle('active',i===0));renderHistory()}
+
+function getFilteredTxnsForDownload(){
+  let months=lastMonths();
+  let tx=db.txns.filter(x=>months.includes(monthKey(x.date)));
+  const q=($('passSearch')?.value||'').trim().toLowerCase();
+  if(q)tx=tx.filter(x=>(x.desc||'').toLowerCase().includes(q)||(x.note||'').toLowerCase().includes(q));
+  if($('fCategory').value)tx=tx.filter(x=>x.categoryId===$('fCategory').value);
+  if($('fAccount').value)tx=tx.filter(x=>x.accountId===$('fAccount').value||x.changes?.some(c=>c.id===$('fAccount').value));
+  if($('fMonth').value)tx=tx.filter(x=>monthKey(x.date)===$('fMonth').value);
+  if($('fType').value)tx=tx.filter(x=>x.type===$('fType').value);
+  let from=$('passFrom')?.value||'',to=$('passTo')?.value||'';
+  if(from)tx=tx.filter(x=>x.date>=from);
+  if(to)tx=tx.filter(x=>x.date<=to);
+  if(passMode!=='all')tx=tx.filter(x=>{
+    let match=a=>a&&(passMode==='bank'?a.type==='bank':passMode==='card'?a.type==='card':passMode==='cash'?a.type==='cash':['loan','familygiven','familytaken'].includes(a.type));
+    return match(acct(x.accountId))||(x.changes||[]).some(c=>match(acct(c.id)));
+  });
+  return tx.sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+function downloadStatement(type){
+  const txns=getFilteredTxnsForDownload();
+  if(!txns.length){alert(t('no_data_filter'));return}
+  const from=$('passFrom')?.value||'Start';
+  const to=$('passTo')?.value||'End';
+  const fileName=`Statement_${from}_to_${to}`;
+  if(type==='excel'){
+    let rows=[[t('date'),t('note_opt'),t('entry_type'),t('amount'),t('acc'),t('note_opt')]];
+    txns.forEach(x=>{rows.push([x.date,x.desc,x.type,x.amount,label(acct(x.accountId)),x.note||'']);});
+    let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    let url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    let a=document.createElement('a');a.href=url;a.download=fileName+'.csv';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }else if(type==='pdf'){
+    let w=window.open('','_blank');
+    if(!w){alert(t('popup_blocked'));return}
+    let totalExp=0;
+    let rowsHtml=txns.map(x=>{
+      if(x.type==='expense')totalExp+=Number(x.amount);
+      let isInc=x.isIncome,isExp=x.type==='expense';
+      let col=isInc?'#145c50':(isExp?'#b42318':'#172b27');
+      let sign=isInc?'+':(isExp?'-':'');
+      return `<tr><td>${esc(x.date)}</td><td><strong>${esc(x.desc)}</strong><br><small>${esc(label(acct(x.accountId)))} ${x.note?'· '+esc(x.note):''}</small></td><td>${esc(x.type)}</td><td style="text-align:right; color:${col}; font-weight:bold;">${sign}${money(x.amount)}</td></tr>`;
+    }).join('');
+    let html=`<html><head><meta charset="utf-8"><title>Statement</title><style>body{font-family:system-ui,-apple-system,sans-serif; padding:20px; color:#172b27;}.head{text-align:center; margin-bottom:20px; border-bottom:2px solid #145c50; padding-bottom:10px;}.head h1{margin:0; color:#145c50; font-size:24px;}.head p{margin:5px 0; color:#687b76; font-size:14px;}table{width:100%; border-collapse:collapse; margin-top:15px;}th,td{border:1px solid #e1e9e6; padding:8px 10px; font-size:12px;}th{background:#e3f3ee; color:#145c50; text-align:left;}.footer{margin-top:20px; font-size:12px; text-align:center; color:#687b76;}</style></head><body><div class="head"><h1>${t('statement_title')}</h1><p>${t('date')}: <strong>${from}</strong> ${currentLang==='hi'?'से':'to'} <strong>${to}</strong></p><p>${t('total_expense')}: <strong style="color:#b42318;">${money(totalExp)}</strong></p></div><table><thead><tr><th>${t('date')}</th><th>${t('note_opt')}</th><th>${t('entry_type')}</th><th style="text-align:right">${t('amount')}</th></tr></thead><tbody>${rowsHtml}</tbody></table><div class="footer">${t('generated_by')}</div><script>window.onload=()=>{setTimeout(()=>{window.print();},500);}<\/script></body></html>`;
+    w.document.write(html);w.document.close();
+  }
+}
+
+function __canvasSetup(canvas,minH=190){
+  if(!canvas||typeof canvas.getContext!=='function')return null;
+  let rect=canvas.getBoundingClientRect();
+  let w=Math.max(280,Math.floor(rect.width||canvas.parentElement?.getBoundingClientRect().width||canvas.width||700));
+  let h=Math.max(minH,Math.floor(rect.height||parseFloat(getComputedStyle(canvas).height)||minH));
+  let dpr=Math.min(2,window.devicePixelRatio||1);
+  canvas.style.width='100%';canvas.style.height=h+'px';
+  canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);
+  let ctx;try{ctx=canvas.getContext('2d')}catch(e){return null}
+  if(!ctx)return null;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  return {ctx,w,h};
+}
+function drawGroupedIncomeExpense(canvas,labels,incomes,expenses){
+  const z=__canvasSetup(canvas,240);if(!z)return;
+  const {ctx,w,h}=z,pL=50,pR=15,top=35,bottom=h-35,plotH=bottom-top,plotW=w-pL-pR;
+  const max=Math.max(1,...incomes,...expenses);
+  ctx.font='bold 11px sans-serif';ctx.textAlign='left';
+  [[t('chart_income'),'#2563eb'],[t('chart_expense'),'#dc2626']].forEach((it,i)=>{let x=pL+i*90;ctx.fillStyle=it[1];ctx.beginPath();ctx.roundRect(x,10,12,12,3);ctx.fill();ctx.fillStyle='#172b27';ctx.fillText(it[0],x+18,20);});
+  for(let k=0;k<4;k++){let y=top+k*plotH/3;ctx.strokeStyle='#e8f0ed';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(w-pR,y);ctx.stroke();ctx.fillStyle='#8aa09b';ctx.textAlign='right';ctx.fillText(Math.round(max*(1-k/3)).toLocaleString('en-IN'),pL-8,y+4)}
+  let slot=plotW/Math.max(1,labels.length),bw=Math.min(26,slot*.3);
+  labels.forEach((lab,i)=>{let cx=pL+slot*(i+.5);[[incomes[i]||0,'#2563eb',-bw*.55],[expenses[i]||0,'#dc2626',bw*.55]].forEach(([v,c,off])=>{let bh=Math.max(0,v/max*(plotH-10));let x=cx+off-bw/2,y=bottom-bh;let grd=ctx.createLinearGradient(0,y,0,bottom);grd.addColorStop(0,c);grd.addColorStop(1,c+'40');ctx.fillStyle=grd;ctx.beginPath();ctx.roundRect(x,y,bw,bh,[6,6,0,0]);ctx.fill();});ctx.fillStyle='#687b76';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText(lab,cx,h-12)})
+}
+function drawLineChart(canvas,labels,series){
+  const z=__canvasSetup(canvas,190);if(!z)return;
+  const {ctx,w,h}=z,pL=50,pR=15,top=35,bottom=h-35,plotW=w-pL-pR,plotH=bottom-top;
+  const colors=['#059669','#dc2626','#7c3aed'];
+  for(let k=0;k<4;k++){let y=top+k*plotH/3;ctx.strokeStyle='#e8f0ed';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(w-pR,y);ctx.stroke();}
+  const scaled=series.map(s=>{const vals=s.values.map(v=>Number(v)||0);const max=Math.max(1,...vals.map(v=>Math.abs(v)));return {...s,vals:vals.map(v=>v/max),max}});
+  scaled.forEach((s,si)=>{const color=colors[si%colors.length];ctx.save();ctx.strokeStyle=color;ctx.lineWidth=3;ctx.lineJoin='round';ctx.shadowColor='rgba(0,0,0,0.15)';ctx.shadowBlur=6;ctx.shadowOffsetY=3;ctx.beginPath();s.vals.forEach((v,i)=>{const x=pL+(labels.length<=1?plotW/2:i*plotW/(labels.length-1));const y=bottom-((v+1)/2)*plotH;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();ctx.restore();s.vals.forEach((v,i)=>{const x=pL+(labels.length<=1?plotW/2:i*plotW/(labels.length-1));const y=bottom-((v+1)/2)*plotH;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();})});
+  let lx=pL;ctx.font='bold 11px sans-serif';
+  scaled.forEach((s,i)=>{const color=colors[i%colors.length];ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(lx,10,12,12,3);ctx.fill();ctx.fillStyle='#172b27';ctx.textAlign='left';const name=s.name;ctx.fillText(name,lx+18,20);lx+=Math.min(150,ctx.measureText(name).width+40)});
+  labels.forEach((l,i)=>{const x=pL+(labels.length<=1?plotW/2:i*plotW/(labels.length-1));ctx.fillStyle='#687b76';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText(l,x,h-12)})
+}
+function drawDonut(canvas,items){
+  const z=__canvasSetup(canvas,240);if(!z)return;
+  const {ctx,w,h}=z;
+  const total=items.reduce((s,x)=>s+(Number(x.value)||0),0);
+  const colors=['#dc2626','#ec4899','#f59e0b','#0ea5e9','#10b981','#ef4444','#8b5cf6','#f97316'];
+  if(total<=0){ctx.fillStyle='#8aa09b';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.fillText(t('no_expense_period'),w/2,h/2);return;}
+  const cx=w*.3,cy=h*.5,r=Math.min(h*.36,w*.22);let a=-Math.PI/2;
+  items.forEach((it,i)=>{let next=a+(it.value/total)*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,r,a,next);ctx.arc(cx,cy,r*.6,next,a,true);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.shadowColor='rgba(0,0,0,0.1)';ctx.shadowBlur=6;ctx.shadowOffsetY=2;ctx.fill();a=next;});
+  ctx.shadowColor='transparent';
+  ctx.fillStyle='#172b27';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText(t('total'),cx,cy-4);
+  ctx.font='12px sans-serif';ctx.fillStyle='#687b76';ctx.fillText(money(total),cx,cy+14);
+  ctx.font='12px sans-serif';
+  items.slice(0,Math.max(1,Math.floor((h-30)/30))).forEach((it,i)=>{const y=30+i*28;ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.arc(w*.6,y-4,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#172b27';ctx.textAlign='left';ctx.fillText(String(it.name).slice(0,18),w*.6+12,y);ctx.fillStyle='#687b76';ctx.textAlign='right';ctx.fillText(money(it.value),w-15,y);})
+}
+function networthAtMonthEnd(m){
+  let bank=0,cash=0,invest=0,card=0,loan=0;
+  for(let a of allAccounts()){
+    let bal=Number(a.balance)||0;
+    if(['bank','cash','investment','gold','silver','land','familygiven'].includes(a.type)){
+      let later=db.txns.filter(x=>monthKey(x.date)>m&&(x.changes||[]).some(c=>c.id===a.id));
+      for(let x of later)for(let c of x.changes||[])if(c.id===a.id&&c.field==='balance')bal-=c.delta;
+      if(a.type==='bank')bank+=bal;else if(a.type==='cash')cash+=bal;else invest+=bal;
+    }else if(a.type==='card'){
+      let avail=Number(a.available)||0;
+      for(let x of db.txns.filter(x=>monthKey(x.date)>m&&(x.changes||[]).some(c=>c.id===a.id)))for(let c of x.changes||[])if(c.id===a.id&&c.field==='available')avail-=c.delta;
+      card+=Number(a.limit||0)-avail;
+    }else if(['loan','familytaken'].includes(a.type)){
+      for(let x of db.txns.filter(x=>monthKey(x.date)>m&&(x.changes||[]).some(c=>c.id===a.id)))for(let c of x.changes||[])if(c.id===a.id&&c.field==='balance')bal-=c.delta;
+      loan+=bal;
+    }
+  }
+  return bank+cash+invest-card-loan;
+}
+function renderGraph(){
+  const period=Number($('graphPeriod')?.value)||6;
+  let months=lastMonths();
+  if(period===12){const d=new Date();months=[];for(let i=11;i>=0;i--){const x=new Date(d.getFullYear(),d.getMonth()-i,1);months.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'))}}
+  drawGroupedIncomeExpense($('incomeExpenseChart'),months.map(monthLabel),months.map(monthIncome),months.map(monthExpenses));
+  drawLineChart($('trendChart'),months.map(monthLabel),[{name:t('chart_income'),values:months.map(monthIncome)},{name:t('chart_expense'),values:months.map(monthExpenses)},{name:t('chart_networth'),values:months.map(networthAtMonthEnd)}]);
+  const m=monthKey(today()),byCat={};
+  db.txns.filter(x=>x.type==='expense'&&monthKey(x.date)===m).forEach(x=>{const c=acct(x.categoryId);const n=c?c.name:(x.desc||t('other_cat'));byCat[n]=(byCat[n]||0)+Number(x.amount||0)});
+  const items=Object.entries(byCat).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value);
+  drawDonut($('categoryChart'),items);
+  $('categoryLegend').innerHTML=items.map(x=>`<div class="item row"><span>${esc(x.name)}</span><strong>${money(x.value)}</strong></div>`).join('')||`<div class="empty">${t('no_expense_month')}</div>`;
+  renderSavings();
+}
+
+function saveSavingsSettings(){db.monthlyIncomeTarget=Math.max(0,Number($('monthlyIncomeTarget').value)||0);db.monthDays=Number($('monthDays').value)||30;save();alert(t('savings_target_saved'))}
+function renderSavings(){
+  if(!$('savingsMetrics'))return;
+  $('monthlyIncomeTarget').value=db.monthlyIncomeTarget||'';
+  $('monthlyIncomeTarget').placeholder=t('est_income_ph');
+  $('monthDays').value=String(db.monthDays||30);
+  let m=monthKey(today()),income=monthIncome(m),expense=monthExpenses(m),net=income-expense;
+  let daily=(Number(db.monthlyIncomeTarget)||0)/(Number(db.monthDays)||30);
+  let todayExp=db.txns.filter(x=>x.date===today()&&x.type==='expense').reduce((s,x)=>s+x.amount,0);
+  let metrics=[[t('recorded_income'),income,t('income_entries')],[t('expense_this_month_full'),expense,t('only_exp_entries')],[t('monthly_savings_loss'),net,net<0?t('exp_gt_inc'):t('income_minus_exp')]];
+  $('savingsMetrics').innerHTML=metrics.map((x,i)=>`<div class="card metric"><small>${x[0]}</small><strong class="${i===2?(x[1]<0?'negative':'positive'):''}">${money(x[1])}</strong><div class="sub">${x[2]}</div></div>`).join('');
+  let alertText='';
+  if(db.monthlyIncomeTarget>0){
+    let dailyResult=daily-todayExp;
+    alertText=`<h3 style="margin:0 0 8px;font-size:15px">${t('today_exp_sav')}</h3><div class="item row"><span>${t('est_daily_income')}</span><strong>${money(daily)}</strong></div><div class="item row"><span>${t('today_recorded_exp')}</span><strong>${money(todayExp)}</strong></div><div class="item row"><span>${t('today_sav_extra')}</span><strong class="${dailyResult<0?'negative':'positive'}">${money(dailyResult)}</strong></div>`;
+  }else{
+    alertText=`<h3 style="margin:0 0 8px;font-size:15px">${t('daily_sav_alert')}</h3><p class="muted">${t('enter_est_income')}</p>`;
+  }
+  $('dailySavingsAlert').innerHTML=alertText;
+  drawGroupedIncomeExpense($('savingsChart'),lastMonths().map(monthLabel),lastMonths().map(monthIncome),lastMonths().map(monthExpenses));
+  $('savingsHistory').innerHTML=lastMonths().slice().reverse().map(x=>{let inc=monthIncome(x),ex=monthExpenses(x),bal=inc-ex;return `<div class="item row"><div><strong>${monthLabel(x)}</strong><div class="muted">${t('inc')} ${money(inc)} · ${t('exp')} ${money(ex)}</div></div><strong class="${bal<0?'negative':'positive'}">${money(bal)}</strong></div>`}).join('');
+}
+
+function renderAll(){renderHome();renderAccounts();setTxnFields();renderHistory();renderGraph();renderTools();renderSavings();renderProfile();renderExpenseEditList();renderIncomeEditList()}
+
+function editAccount(i){
+  let a=acct(i);if(!a||a.closed)return;
+  let promptText=a.type==='card'?t('edit_limit'):t('edit_balance');
+  let v=prompt(promptText,a.type==='card'?a.available:a.balance);
+  if(v===null)return;
+  let n=Number(v);
+  if(!Number.isFinite(n)||n<0){alert(t('enter_valid_amt'));return}
+  if(a.type==='card'&&n>a.limit){alert(t('limit_exceed'));return}
+  if(a.type==='card')a.available=n;else a.balance=n;
+  save();
+}
+function deleteAccount(i){
+  let a=acct(i);if(!a)return;
+  if(a.closed){
+    if(!confirm(t('del_closed_acc_confirm')))return;
+    if(db.txns.some(x=>x.accountId===i||x.categoryId===i||x.changes?.some(c=>c.id===i))){alert(t('old_txn_exist'));return}
+    db.accounts=db.accounts.filter(x=>x.id!==i);save();return;
+  }
+  let linked=db.txns.some(x=>x.accountId===i||x.categoryId===i||x.changes?.some(c=>c.id===i));
+  if(linked){
+    if(!confirm(t('close_acc_confirm')))return;
+    a.closed=true;a.closedAt=today();save();return;
+  }
+  if(!confirm(t('del_acc_confirm')))return;
+  db.accounts=db.accounts.filter(x=>x.id!==i);save();
+}
+function deleteTxn(i){
+  let x=db.txns.find(y=>y.id===i);
+  if(!x||!confirm(t('del_txn_confirm')))return;
+  for(let c of (x.changes||[])){let a=acct(c.id);if(a)a[c.field]-=c.delta}
+  db.txns=db.txns.filter(y=>y.id!==i);save();
+}
+
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mera-hisab-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.accounts)||!Array.isArray(d.txns))throw Error();d.accounts=d.accounts.map(a=>({rate:0,limit:0,available:0,emi:0,weight:0,...a}));d.txns=d.txns.map(t=>({...t,changes:Array.isArray(t.changes)?t.changes:[]}));if(confirm(t('load_backup_confirm'))){db=d;save();alert(t('backup_loaded'))}}catch(err){alert(t('invalid_backup'))}e.target.value=''};r.readAsText(f)}
+function nextDate(day){if(!day)return null;let now=new Date(),d=new Date(now.getFullYear(),now.getMonth(),Math.min(day,new Date(now.getFullYear(),now.getMonth()+1,0).getDate()));if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()))d=new Date(now.getFullYear(),now.getMonth()+1,Math.min(day,new Date(now.getFullYear(),now.getMonth()+2,0).getDate()));return d}
+function renderTools(){
+  let items=[];
+  for(let a of accounts('loan'))if(a.day){let d=nextDate(a.day);items.push({date:d,who:label(a),what:t('loan_emi'),amount:a.emi||0})}
+  for(let a of accounts('card'))if(a.dueDay){let d=nextDate(a.dueDay);items.push({date:d,who:label(a),what:t('card_due_date'),amount:Math.max(0,a.limit-a.available)})}
+  items.sort((a,b)=>a.date-b.date);
+  $('dueList').innerHTML=items.length?items.map(x=>`<div class="item row"><div><strong>${esc(x.what)}</strong><div class="muted">${esc(x.who)} · ${x.date.toLocaleDateString(currentLang==='hi'?'hi-IN':'en-IN')}</div></div><strong>${money(x.amount)}</strong></div>`).join(''):`<div class="empty">${t('no_upcoming')}</div>`;
+  let m=monthKey(today()),tx=db.txns.filter(x=>monthKey(x.date)===m);
+  let exp=tx.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0),income=monthIncome(m);
+  $('monthlySummary').innerHTML=`<div class="item row"><span>${t('recorded_income')}</span><strong>${money(income)}</strong></div><div class="item row"><span>${t('expense_this_month_full')}</span><strong>${money(exp)}</strong></div><div class="item row"><span>${t('diff')}</span><strong class="${income-exp<0?'negative':'positive'}">${money(income-exp)}</strong></div>`;
+}
+function togglePrivacy(){document.body.classList.toggle('privacy');$('privacyBtn').textContent=document.body.classList.contains('privacy')?t('show_amt'):t('hide_amt')}
+function exportCSV(){let rows=[['Date','Description','Type','Amount','Account','Note'],...db.txns.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.date,t.desc,t.type,t.amount,label(acct(t.accountId)),t.note||''])];let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');let url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),a=document.createElement('a');a.href=url;a.download='mera-hisab-report-'+today()+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function printReport(){let w=window.open('','_blank');if(!w){alert(t('popup_blocked_short'));return}let rows=db.txns.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(t=>`<tr><td>${esc(t.date)}</td><td>${esc(t.desc)}</td><td>${esc(t.type)}</td><td style="text-align:right">${money(t.amount)}</td><td>${esc(label(acct(t.accountId)))}</td></tr>`).join('');w.document.write(`<html lang="${currentLang}"><meta charset="utf-8"><title>Report</title><style>body{font-family:Arial,sans-serif;padding:24px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:7px;text-align:left}h1{color:#145c50}</style><h1>${t('app_title')} — Report</h1><p>Date: ${today()} · Net Worth: ${money(networth())}</p><table><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th><th>Account</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print()<\/script></html>`);w.document.close()}
+
+function closeDrawer(){$('drawer').classList.remove('open');$('drawerShade').classList.remove('open')}
+$('menuOpen').addEventListener('click',()=>{$('drawer').classList.add('open');$('drawerShade').classList.add('open')});
+$('drawerShade').addEventListener('click',closeDrawer);
+document.querySelectorAll('.drawer-link').forEach(b=>b.addEventListener('click',()=>navigateTo(b.dataset.page)));
+function navigateTo(page){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===page));document.querySelectorAll('.drawer-link').forEach(b=>b.classList.toggle('active',b.dataset.page===page));closeDrawer();window.scrollTo({top:0,behavior:'smooth'});if(page==='graph')requestAnimationFrame(renderGraph);if(page==='history')renderHistory();if(page==='profile')renderProfile();if(page==='expenseSetup'){renderExpenseEditList();}if(page==='incomeSetup'){renderIncomeEditList();}}
+function accountView(which){$('accountAddView').classList.toggle('active',which==='add');$('accountManageView').classList.toggle('active',which==='manage');document.querySelectorAll('#accounts .subtabs .subtile').forEach((b,i)=>b.classList.toggle('active',(which==='add'?i===0:i===1)))}
+function entryPreset(type,btn){document.querySelectorAll('#entry .subtabs .subtile').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');$('tType').value=type;setTxnFields();$('txnForm').scrollIntoView({behavior:'smooth',block:'start'})}
+
+function loadProfile(){try{return JSON.parse(localStorage.getItem(PROFILE_KEY))||null}catch(e){return null}}
+function saveProfile(p){localStorage.setItem(PROFILE_KEY,JSON.stringify(p))}
+function activeProfile(){return loadProfile()}
+function validMobile(v){return /^(\+?91)?[6-9]\d{9}$/.test(String(v||'').replace(/[\s\-()]/g,''))}
+function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
+
+document.getElementById('profileForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const msg=$('profileMsg');msg.className='auth-msg error';msg.textContent='';
+  const name=$('pfName').value.trim();
+  const mobile=$('pfMobile').value.trim();
+  const email=$('pfEmail').value.trim().toLowerCase();
+  if(!name||name.length<2){msg.textContent=t('enter_full_name');return}
+  if(!validMobile(mobile)){msg.textContent=t('enter_valid_mobile');return}
+  if(!validEmail(email)){msg.textContent=t('enter_valid_email');return}
+  const p={name,mobile,email,createdAt:new Date().toISOString()};
+  saveProfile(p);
+  msg.className='auth-msg success';msg.textContent=t('profile_success');
+  setTimeout(()=>openAppWithProfile(p),300);
+});
+
+function openAppWithProfile(p){
+  $('profileGate').style.display='none';
+  const topbar=$('topbarTitle'); if(topbar) topbar.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${t('app_title')}`+(p.name?' · '+p.name:'');
+  const dt=$('drawerUserName'); if(dt) dt.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${p.name||t('app_title')}`;
+  try{renderAll()}catch(e){}
+  renderProfile();
+}
+function bootApp(){const p=loadProfile();if(p&&p.name){openAppWithProfile(p);}else{$('profileGate').style.display='flex';}}
+
+function renderProfile(){
+  const box=$('profileContent');if(!box)return;
+  const p=activeProfile();
+  if(!p){box.innerHTML=`<div class="empty">${t('profile_not_created')}</div>`;return}
+  const initial=(p.name||'?').trim().charAt(0).toUpperCase();
+  const createdStr=new Date(p.createdAt).toLocaleDateString(currentLang==='hi'?'hi-IN':'en-IN');
+  box.innerHTML=`
+    <div class="profile-head"><div class="avatar-circle">${initial}</div><h3>${esc(p.name)}</h3><p>${t('profile_created')} · ${createdStr}</p></div>
+    <div class="profile-row"><span class="lbl">${t('name')}</span><span class="val">${esc(p.name)}</span></div>
+    <div class="profile-row"><span class="lbl">${t('mobile')}</span><span class="val">${esc(p.mobile)}</span></div>
+    <div class="profile-row"><span class="lbl">${t('email')}</span><span class="val">${esc(p.email)}</span></div>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" onclick="startProfileEdit()">${t('edit_profile')}</button>
+    </div>`;
+}
+function startProfileEdit(){
+  const p=activeProfile();if(!p)return;
+  $('epName').value=p.name||'';
+  $('epMobile').value=p.mobile||'';
+  $('epEmail').value=p.email||'';
+  $('profileContent').style.display='none';
+  $('profileEditBox').style.display='block';
+  $('profileEditMsg').textContent='';
+}
+function cancelProfileEdit(){
+  $('profileContent').style.display='block';
+  $('profileEditBox').style.display='none';
+}
+document.getElementById('profileEditForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const msg=$('profileEditMsg');msg.className='auth-msg error';msg.textContent='';
+  const name=$('epName').value.trim();
+  const mobile=$('epMobile').value.trim();
+  const email=$('epEmail').value.trim().toLowerCase();
+  if(!name||name.length<2){msg.textContent=t('enter_valid_name');return}
+  if(!validMobile(mobile)){msg.textContent=t('invalid_mobile');return}
+  if(!validEmail(email)){msg.textContent=t('invalid_email');return}
+  const old=activeProfile();
+  const p={...old,name,mobile,email,updatedAt:new Date().toISOString()};
+  saveProfile(p);
+  const topbar=$('topbarTitle'); if(topbar) topbar.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${t('app_title')} · ${name}`;
+  const dt=$('drawerUserName'); if(dt) dt.innerHTML=`<span style="background:#ffffff25;padding:2px 6px;border-radius:6px;margin-right:4px;font-weight:900;font-size:16px">MD</span> ${name}`;
+  cancelProfileEdit();
+  renderProfile();
+  alert(t('profile_updated'));
+});
+
+function openCategorySetup(kind){
+  if(kind==='category'){navigateTo('expenseSetup');catSetupTab('expense','add');}
+  else if(kind==='incomesource'){navigateTo('incomeSetup');catSetupTab('income','add');}
+}
+function catSetupTab(kind,which){
+  if(kind==='expense'){
+    $('expAddView').classList.toggle('active',which==='add');
+    $('expEditView').classList.toggle('active',which==='edit');
+    $('expAddTab').classList.toggle('active',which==='add');
+    $('expEditTab').classList.toggle('active',which==='edit');
+    if(which==='edit')renderExpenseEditList();
+  }else{
+    $('incAddView').classList.toggle('active',which==='add');
+    $('incEditView').classList.toggle('active',which==='edit');
+    $('incAddTab').classList.toggle('active',which==='add');
+    $('incEditTab').classList.toggle('active',which==='edit');
+    if(which==='edit')renderIncomeEditList();
+  }
+}
+document.getElementById('expAddForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('expAddName').value.trim();
+  if(!name)return;
+  if(db.accounts.some(a=>a.type==='category'&&a.name.toLowerCase()===name.toLowerCase())){alert(t('cat_exists'));return}
+  db.accounts.push({id:id(),type:'category',name,balance:0,weight:0,limit:0,available:0,emi:0});
+  $('expAddName').value='';
+  save();
+  alert(t('exp_cat_added'));
+});
+document.getElementById('incAddForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('incAddName').value.trim();
+  if(!name)return;
+  if(db.accounts.some(a=>a.type==='incomesource'&&a.name.toLowerCase()===name.toLowerCase())){alert(t('src_exists'));return}
+  db.accounts.push({id:id(),type:'incomesource',name,balance:0,weight:0,limit:0,available:0,emi:0});
+  $('incAddName').value='';
+  save();
+  alert(t('inc_cat_added'));
+});
+
+function renderExpenseEditList(){
+  const el=$('expEditList');if(!el)return;
+  const list=db.accounts.filter(a=>a.type==='category');
+  if(!list.length){el.innerHTML=`<div class="cat-empty">${t('no_exp_cat')}</div>`;return}
+  el.innerHTML=list.map(a=>`<div class="cat-list-item"><span class="cat-name">${esc(a.name)}</span><div class="actions"><button class="btn secondary small" onclick="renameCategory('${a.id}','category')">${t('rename')}</button><button class="btn danger small" onclick="deleteCategory('${a.id}','category')">${t('delete')}</button></div></div>`).join('');
+}
+function renderIncomeEditList(){
+  const el=$('incEditList');if(!el)return;
+  const list=db.accounts.filter(a=>a.type==='incomesource');
+  if(!list.length){el.innerHTML=`<div class="cat-empty">${t('no_inc_cat')}</div>`;return}
+  el.innerHTML=list.map(a=>`<div class="cat-list-item"><span class="cat-name">${esc(a.name)}</span><div class="actions"><button class="btn secondary small" onclick="renameCategory('${a.id}','incomesource')">${t('rename')}</button><button class="btn danger small" onclick="deleteCategory('${a.id}','incomesource')">${t('delete')}</button></div></div>`).join('');
+}
+function renameCategory(id0,kind){
+  const a=acct(id0);if(!a)return;
+  const name=prompt(t('new_name'),a.name);
+  if(name===null)return;
+  const n=name.trim();
+  if(!n){alert(t('name_empty'));return}
+  if(db.accounts.some(x=>x.type===kind&&x.id!==id0&&x.name.toLowerCase()===n.toLowerCase())){alert(t('name_exists'));return}
+  a.name=n;save();
+  if(kind==='category')renderExpenseEditList();else renderIncomeEditList();
+}
+function deleteCategory(id0,kind){
+  const a=acct(id0);if(!a)return;
+  const used=db.txns.some(x=>x.categoryId===id0);
+  if(used){if(!confirm(t('cat_used_confirm')))return;}
+  else{if(!confirm(t('cat_delete_confirm')))return;}
+  db.accounts=db.accounts.filter(x=>x.id!==id0);
+  save();
+  if(kind==='category')renderExpenseEditList();else renderIncomeEditList();
+}
+
+/* ============ SMART CALENDAR ============ */
+let smartCalCursor=new Date(); smartCalCursor.setDate(1);
+let smartCalStart='',smartCalEnd='',smartCalDragging=false,smartCalJustDragged=false;
+function smartDateStr(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function smartCalendarMonth(delta){
+  const y=smartCalCursor.getFullYear();
+  const m=smartCalCursor.getMonth();
+  smartCalCursor=new Date(y,m+delta,1);
+  smartCalStart='';smartCalEnd='';
+  renderSmartCalendar();
+  renderSmartTransactions();
+}
+function smartCalendarSelect(date){if(!smartCalStart||smartCalEnd){smartCalStart=date;smartCalEnd=date}else{smartCalEnd=date;if(smartCalEnd<smartCalStart){let x=smartCalStart;smartCalStart=smartCalEnd;smartCalEnd=x}}renderSmartCalendar();renderSmartTransactions()}
+function smartCalendarDragStart(date){smartCalDragging=true;smartCalJustDragged=false;smartCalStart=date;smartCalEnd=date;updateSmartCalendarSelection();}
+function smartCalendarDragOver(date){if(smartCalDragging&&date){smartCalEnd=date;updateSmartCalendarSelection()}}
+function updateSmartCalendarSelection(){const el=$('smartCalendar');if(!el)return;let a=smartCalStart,b=smartCalEnd||smartCalStart;if(b<a){const x=a;a=b;b=x}el.querySelectorAll('.cal-day[data-date]').forEach(btn=>{const d=btn.dataset.date;btn.classList.toggle('selected',!!a&&d>=a&&d<=b);btn.classList.toggle('range-start',!!a&&d===a);btn.classList.toggle('range-end',!!b&&d===b)})}
+function smartCalendarDragEnd(){if(smartCalDragging){smartCalDragging=false;smartCalJustDragged=true;if(smartCalEnd<smartCalStart){let x=smartCalStart;smartCalStart=smartCalEnd;smartCalEnd=x}updateSmartCalendarSelection();renderSmartTransactions()}}
+function renderSmartCalendar(){
+  const el=$('smartCalendar');if(!el)return;
+  const y=smartCalCursor.getFullYear(),m=smartCalCursor.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+  $('smartCalTitle').textContent=calTitleText();
+  const dayHeads=currentLang==='hi'?['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html=dayHeads.map(x=>`<div class="cal-head">${x}</div>`).join('');
+  for(let i=0;i<first;i++)html+='<div class="cal-day empty-day"></div>';
+  for(let d=1;d<=days;d++){
+    let date=smartDateStr(y,m,d);
+    let dayTx=db.txns.filter(x=>x.date===date);
+    let dayInc=dayTx.filter(x=>x.isIncome===true).reduce((s,x)=>s+(Number(x.amount)||0),0);
+    let dayExp=dayTx.filter(x=>x.type==='expense').reduce((s,x)=>s+(Number(x.amount)||0),0);
+    let has=dayTx.length>0;
+    let sel=smartCalStart&&smartCalEnd&&date>=smartCalStart&&date<=smartCalEnd;
+    let edge=date===smartCalStart?'range-start':date===smartCalEnd?'range-end':'';
+    let inner=`<span>${d}</span>`;
+    if(dayInc>0) inner+=`<span class="day-income">+₹${Number(dayInc).toLocaleString('en-IN')}</span>`;
+    if(dayExp>0) inner+=`<span class="day-total">-₹${Number(dayExp).toLocaleString('en-IN')}</span>`;
+    html+=`<button type="button" class="cal-day ${has?'has-tx':''} ${sel?'selected':''} ${edge}" data-date="${date}">${inner}</button>`;
+  }
+  el.innerHTML=html;
+  el.querySelectorAll('.cal-day[data-date]').forEach(b=>{
+    b.addEventListener('pointerdown',ev=>{ev.preventDefault();smartCalendarDragStart(b.dataset.date)});
+    b.addEventListener('click',ev=>{if(smartCalJustDragged){smartCalJustDragged=false;ev.preventDefault();return}smartCalendarSelect(b.dataset.date)})
+  });
+}
+document.addEventListener('pointermove',ev=>{if(!smartCalDragging)return;const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest?.('#smartCalendar .cal-day[data-date]');if(target)smartCalendarDragOver(target.dataset.date)});
+document.addEventListener('pointerup',()=>smartCalendarDragEnd());
+document.addEventListener('pointercancel',()=>smartCalendarDragEnd());
+function renderSmartTransactions(){
+  const out=$('smartTxnResults');if(!out)return;
+  if(!smartCalStart){$('smartDateRange').textContent=t('select_date');out.innerHTML='';return}
+  let a=smartCalStart,b=smartCalEnd||smartCalStart;if(b<a){let x=a;a=b;b=x}
+  let tx=db.txns.filter(x=>x.date>=a&&x.date<=b);
+  if($('smartCat').value)tx=tx.filter(x=>String(x.categoryId||'')===$('smartCat').value);
+  if($('smartAccount').value)tx=tx.filter(x=>x.accountId===$('smartAccount').value||(x.changes||[]).some(c=>c.id===$('smartAccount').value));
+  if($('smartType').value)tx=tx.filter(x=>x.type===$('smartType').value);
+  tx.sort((x,y)=>y.date.localeCompare(x.date));
+  let inc=tx.filter(x=>x.isIncome===true),incSum=inc.reduce((s,x)=>s+(Number(x.amount)||0),0);
+  let ex=tx.filter(x=>x.type==='expense'),expSum=ex.reduce((s,x)=>s+(Number(x.amount)||0),0);
+  $('smartDateRange').textContent=`${t('selected_dates')}: ${a} ${currentLang==='hi'?'से':'to'} ${b} · ${tx.length} ${t('txn_word')}`;
+  let summary=`<div class="item row"><div><strong>${t('total_income')}</strong><div class="muted">${inc.length} ${t('income_entries')}</div></div><strong class="positive">${money(incSum)}</strong></div><div class="item row"><div><strong>${t('total_expense')}</strong><div class="muted">${ex.length} ${t('expense_entries')}</div></div><strong class="negative">${money(expSum)}</strong></div>`;
+  out.innerHTML=summary+(tx.map(txnHTML).join('')||`<div class="empty">${t('nothing_period')}</div>`);
+}
+function initSmartCalendar(){fillSelect($('smartCat'),accounts('category'),t('all_cats'));fillSelect($('smartAccount'),db.accounts.filter(a=>['bank','card','loan','cash','familygiven','familytaken','investment','gold','silver','land'].includes(a.type)),t('all_accs'));['smartCat','smartAccount','smartType'].forEach(id=>$(id)?.addEventListener('change',renderSmartTransactions));renderSmartCalendar();renderSmartTransactions()}
+
+function passbookView(which){$('passView').classList.toggle('active',which==='view');$('passEdit').classList.toggle('active',which==='edit');$('passSaving').classList.toggle('active',which==='saving');document.querySelectorAll('#history > .passbook-tabs .subtile').forEach((b,i)=>b.classList.toggle('active',({view:0,edit:1,saving:2})[which]===i));if(which==='edit')renderHistoryEdit();else if(which==='view')renderHistory();else savingDetail('income')}
+function passFilterMode(mode,btn){passMode=mode;document.querySelectorAll('#passView .mini-tabs button').forEach(b=>b.classList.toggle('active',b===btn));renderHistory()}
+function savingDetail(which){
+  let m=monthKey(today()),tx=db.txns.filter(x=>monthKey(x.date)===m);
+  let inc=tx.filter(x=>x.isIncome);let exp=tx.filter(x=>x.type==='expense');
+  let data=which==='income'?inc:which==='expense'?exp:[];
+  let amount=which==='income'?inc.reduce((s,x)=>s+x.amount,0):which==='expense'?exp.reduce((s,x)=>s+x.amount,0):inc.reduce((s,x)=>s+x.amount,0)-exp.reduce((s,x)=>s+x.amount,0);
+  let title=which==='income'?t('income_this_month'):which==='expense'?t('expense_this_month'):t('savings_loss_this_month');
+  let html=`<div class="item row"><strong>${title}</strong><strong class="${amount<0?'negative':'positive'}">${money(amount)}</strong></div>`;
+  if(which!=='saving')html+=(data.map(x=>`<div class="item row"><div><strong>${esc(x.desc)}</strong><div class="muted">${esc(x.date)}</div></div><strong>${money(x.amount)}</strong></div>`).join('')||`<div class="empty">${t('no_entries_short')}</div>`);
+  else html+=`<div class="hint">${t('total_income_minus_exp')}</div>`;
+  $('savingDetailContent').innerHTML=html;
+  document.querySelectorAll('#passSaving .subtabs .subtile').forEach((b,i)=>b.classList.toggle('active',({income:0,expense:1,saving:2})[which]===i));
+}
+function renderHistoryEdit(){let tx=db.txns.slice().sort((a,b)=>b.date.localeCompare(a.date));$('historyEditList').innerHTML=tx.map(x=>`<div class="item"><div class="row"><div><strong>${esc(x.desc)}</strong><div class="muted">${esc(x.date)} · ${esc(label(acct(x.accountId)))}</div></div><strong>${money(x.amount)}</strong></div><div class="actions" style="margin-top:8px"><button class="btn danger small" onclick="deleteTxn('${x.id}');renderHistoryEdit()">${t('delete')}</button></div></div>`).join('')||`<div class="empty">${t('no_txn')}</div>`}
+function graphView(which,btn){['income','category','trend'].forEach(x=>$('graph'+x[0].toUpperCase()+x.slice(1)+'View').classList.toggle('active',x===which));document.querySelectorAll('#graph > .subtabs .subtile').forEach(b=>b.classList.toggle('active',b===btn));requestAnimationFrame(renderGraph)}
+
+/* INIT */
+window.addEventListener('DOMContentLoaded',()=>{
+  setAccountFields();
+  setTxnFields();
+  try{initSmartCalendar()}catch(e){console.error('Smart calendar init',e)}
+  bootApp();
+  applyLanguage();
+});
+window.addEventListener('resize',()=>{if($('home')?.classList.contains('active')||$('graph')?.classList.contains('active'))requestAnimationFrame(renderGraph)});
+</script>
+
+<!-- Capacitor AdMob Integration (Banner, Interstitial Video & Rewarded Ad) -->
+<script>
+(function(){
+  const ADMOB_APP_ID = 'ca-app-pub-583188129330144~2578300444';
+  const ADMOB_BANNER_ID = 'ca-app-pub-583188129330144/2991789064';
+  const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-583188129330144/8965625723';
+  const ADMOB_REWARDED_ID = 'ca-app-pub-583188129330144/7767047947';
+
+  let AdMobPlugin = null;
+  let interstitialReady = false;
+  let rewardedReady = false;
+
+  async function initAdMob() {
+    const cap = window.Capacitor;
+    if (!cap || !cap.Plugins || !cap.Plugins.AdMob) return;
+    AdMobPlugin = cap.Plugins.AdMob;
+
+    try {
+      await AdMobPlugin.initialize({ initializeForTesting: false });
+
+      await AdMobPlugin.showBanner({
+        adId: ADMOB_BANNER_ID,
+        adSize: 'ADAPTIVE_BANNER',
+        position: 'BOTTOM_CENTER',
+        margin: 0
+      });
+      document.body.style.paddingBottom = '120px';
+
+      await preloadInterstitial();
+      await preloadRewarded();
+    } catch (e) {
+      console.log('AdMob init info:', e);
+    }
+  }
+
+  async function preloadInterstitial() {
+    if (!AdMobPlugin) return;
+    try {
+      await AdMobPlugin.prepareInterstitial({ adId: ADMOB_INTERSTITIAL_ID });
+      interstitialReady = true;
+    } catch (e) { interstitialReady = false; }
+  }
+
+  async function preloadRewarded() {
+    if (!AdMobPlugin) return;
+    try {
+      await AdMobPlugin.prepareRewardVideoAd({ adId: ADMOB_REWARDED_ID });
+      rewardedReady = true;
+    } catch (e) { rewardedReady = false; }
+  }
+
+  window.showAppVideoAd = async function() {
+    if (!AdMobPlugin) return;
+    try {
+      if (interstitialReady) {
+        await AdMobPlugin.showInterstitial();
+        interstitialReady = false;
+        setTimeout(preloadInterstitial, 2000);
+      } else { preloadInterstitial(); }
+    } catch (e) { preloadInterstitial(); }
+  };
+
+  window.showAppRewardAd = async function(onSuccess) {
+    if (!AdMobPlugin) { if(onSuccess) onSuccess(); return; }
+    try {
+      if (rewardedReady) {
+        const reward = await AdMobPlugin.showRewardVideoAd();
+        rewardedReady = false;
+        setTimeout(preloadRewarded, 2000);
+        if(onSuccess) onSuccess();
+      } else {
+        preloadRewarded();
+        if(onSuccess) onSuccess();
+      }
+    } catch (e) {
+      preloadRewarded();
+      if(onSuccess) onSuccess();
+    }
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initAdMob, 1200);
+
+    const txnForm = document.getElementById('txnForm');
+    if (txnForm) {
+      txnForm.addEventListener('submit', () => {
+        setTimeout(() => { if(window.showAppVideoAd) window.showAppVideoAd(); }, 400);
+      });
+    }
+
+    const origDownload = window.downloadStatement;
+    if (typeof origDownload === 'function') {
+      window.downloadStatement = function(type) {
+        window.showAppRewardAd(() => { origDownload(type); });
+      };
+    }
+
+    const origExport = window.exportData;
+    if (typeof origExport === 'function') {
+      window.exportData = function() {
+        window.showAppRewardAd(() => { origExport(); });
+      };
+    }
+  });
+})();
+</script>
+
+<!-- Service Worker Registration (PWA) -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(err){
+      console.log('SW registration failed:', err);
+    });
+  });
+}
+</script>
+</body></html>

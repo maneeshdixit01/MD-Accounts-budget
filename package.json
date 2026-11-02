@@ -1,0 +1,14 @@
+{
+  "name": "md-account-budget",
+  "version": "1.0.0",
+  "description": "Personal Finance and Budget Management App",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "cordova-plugin-admob-free": "^0.27.0"
+  }
+}
+```[cite: 1]
