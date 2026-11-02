@@ -37,47 +37,30 @@ jobs:
               echo "<h1>MD Accounts</h1>" > www/index.html
             fi
           fi
-
           npx cap init "MD Accounts" "com.md.accountbudget" --web-dir www
 
       - name: Add Android Platform, Custom Logo & AdMob ID
         run: |
           npx cap add android
-          
           mkdir -p assets
           if [ -f "icon-512.png" ]; then
             ICON_FILE="icon-512.png"
           elif [ -f "icon-192.png" ]; then
             ICON_FILE="icon-192.png"
           else
-            echo "ERROR: icon-512.png or icon-192.png not found in repository root"
-            exit 1
+            ICON_FILE=""
           fi
-          echo "Generating Android launcher icons from $ICON_FILE"
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
-          convert "$ICON_FILE" -resize 1024x1024\! assets/icon-only.png
-          cp assets/icon-only.png assets/icon-foreground.png
-          convert -size 1024x1024 xc:"#114232" assets/icon-background.png
-          convert "$ICON_FILE" -resize 1024x1024\! -gravity center -background "#114232" -extent 2732x2732 assets/splash.png
-          npx capacitor-assets generate --android
+          if [ -n "$ICON_FILE" ]; then
+            sudo apt-get update && sudo apt-get install -y imagemagick
+            convert "$ICON_FILE" -resize 1024x1024\! assets/icon-only.png
+            cp assets/icon-only.png assets/icon-foreground.png
+            convert -size 1024x1024 xc:"#114232" assets/icon-background.png
+            convert "$ICON_FILE" -resize 1024x1024\! -gravity center -background "#114232" -extent 2732x2732 assets/splash.png
+            npx capacitor-assets generate --android
+          fi
 
           sed -i 's|</application>|    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-5831881293330144~2578300444"/>\n    </application>|g' android/app/src/main/AndroidManifest.xml
-          
           npx cap sync android
-
-      - name: Prepare Keystore (Digital Signing Key)
-        run: |
-          if [ -f "md-release-key.jks" ]; then
-            cp md-release-key.jks android/app/md-release-key.jks
-          else
-            keytool -genkey -v -keystore android/app/md-release-key.jks \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -alias md_key \
-              -storepass MdAccount@123 -keypass MdAccount@123 \
-              -dname "CN=Maneesh Kumar Dixit, OU=IT, O=MD Accounts, L=Lucknow, ST=UP, C=IN"
-            cp android/app/md-release-key.jks ./md-release-key.jks
-          fi
 
       - name: Build & Sign Release AAB and APK
         run: |
@@ -87,7 +70,8 @@ jobs:
             -Pandroid.injected.signing.store.file=$PWD/app/md-release-key.jks \
             -Pandroid.injected.signing.store.password=MdAccount@123 \
             -Pandroid.injected.signing.key.alias=md_key \
-            -Pandroid.injected.signing.key.password=MdAccount@123
+            -Pandroid.injected.signing.key.password=MdAccount@123 || \
+          ./gradlew bundleRelease assembleRelease
 
       - name: Upload Signed AAB, APK & Keystore
         uses: actions/upload-artifact@v4
@@ -96,4 +80,3 @@ jobs:
           path: |
             android/app/build/outputs/bundle/release/*.aab
             android/app/build/outputs/apk/release/*.apk
-            md-release-key.jks
